@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <!-- 深色背景 -->
+  <rect width="400" height="400" fill="#1a1a2e" />
+  
+  <!-- 星星点缀 -->
+  <g>
+    <circle cx="100" cy="80" r="3" fill="white" opacity="0.7" />
+    <circle cx="320" cy="60" r="2.5" fill="white" opacity="0.6" />
+    <circle cx="70" cy="180" r="2" fill="white" opacity="0.8" />
+    <circle cx="350" cy="200" r="2.5" fill="white" opacity="0.7" />
+    <circle cx="150" cy="300" r="3" fill="white" opacity="0.6" />
+    <circle cx="280" cy="320" r="2" fill="white" opacity="0.8" />
+    
+    <!-- 闪亮的星星 -->
+    <path d="M310,120 L315,130 L325,130 L317,138 L320,150 L310,144 L300,150 L303,138 L295,130 L305,130 Z" fill="#FBBF24" />
+    <path d="M80,240 L85,250 L95,250 L87,258 L90,270 L80,264 L70,270 L73,258 L65,250 L75,250 Z" fill="#FBBF24" />
+  </g>
+  
+  <!-- 月亮图案 -->
+  <g transform="translate(200, 200) scale(0.8)">
+    <circle cx="0" cy="0" r="100" fill="#F9FAFB" />
+    <circle cx="40" cy="-20" r="105" fill="#1a1a2e" />
+  </g>
+</svg> 
