@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from './components/Navbar';
+import ClientThemeProvider from './providers/ThemeProvider';
+import ScrollProgressBar from './components/ScrollProgressBar';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,12 +29,15 @@ export default function RootLayout({
   return (
     <html lang="zh">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen transition-colors duration-500`}
       >
-        <Navbar />
-        <main className="pt-16">
-          {children}
-        </main>
+        <ClientThemeProvider>
+          <ScrollProgressBar />
+          <Navbar />
+          <main className="pt-16">
+            {children}
+          </main>
+        </ClientThemeProvider>
       </body>
     </html>
   );

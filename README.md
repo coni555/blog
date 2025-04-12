@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 小夜 AI 创作馆 - 个人博客
 
-## Getting Started
+一个以宇宙探索为主题的个人博客网站，提供沉浸式阅读体验。
 
-First, run the development server:
+## 🌌 主题特色
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+网站提供两种主题风格：
+
+- **✨ 星空感**：以深邃的星空为背景，呈现出宇宙探索的氛围
+- **🪞 镜像**：以流动的数据为背景，呈现出镜像折射的科技感
+
+## 🚀 特色功能
+
+- **3D 轮播展示**：分类文章以3D轮播方式呈现，增强交互体验
+- **随机探索功能**：支持随机跳转到未读文章，增强探索感
+- **阅读历史记录**：记录已读文章，优先推荐未读内容
+- **响应式设计**：完美适配桌面和移动设备
+- **主题记忆**：自动记住用户上次选择的主题
+
+## 📱 页面说明
+
+网站包含以下主要页面：
+
+1. **首页**：展示所有文章分类及最新文章
+2. **文章详情页**：仅展示文章基本信息和摘要，提供跳转到原文的链接
+3. **分类页**：展示特定分类下的所有文章
+4. **搜索结果页**：展示搜索匹配的所有文章
+
+## 🔍 导航方式
+
+- **分类导航**：点击首页上的分类卡片，查看该分类下的所有文章
+- **随机探索**：点击"随机探索宇宙"按钮，随机浏览未读文章
+- **搜索**：通过顶部搜索框，根据关键词查找相关文章
+- **相关推荐**：在文章详情页底部，提供相关文章推荐
+
+## 💻 技术栈
+
+- **前端**：Next.js + React + TypeScript
+- **样式**：Tailwind CSS
+- **动效**：CSS动画 + React动画钩子
+- **数据**：本地JSON文件（可扩展为API获取）
+
+## 🌟 使用说明
+
+1. 顶部导航栏可快速访问首页、分类和关于我
+2. 右上角可切换主题风格
+3. 左侧快速导航可跳转到分类和最新文章
+4. 中央随机按钮可随机探索任一文章
+
+## 📝 文章格式
+
+文章数据结构包含以下字段：
+
+```typescript
+interface Article {
+  id: string;        // 文章唯一标识
+  title: string;     // 文章标题
+  date: string;      // 发布日期
+  author: string;    // 作者
+  category: string;  // 分类
+  url: string;       // 原文链接
+  summary?: string;  // 摘要（可选）
+  content?: string;  // 内容（可选）
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 开始使用
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# 安装依赖
+npm install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# 启动开发服务器
+npm run dev
 
-## Learn More
+# 构建生产版本
+npm run build
 
-To learn more about Next.js, take a look at the following resources:
+# 启动生产服务器
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+访问 [http://localhost:3000](http://localhost:3000) 查看网站。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 许可证
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+本项目采用 MIT 许可证

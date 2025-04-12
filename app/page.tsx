@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Link from 'next/link';
 // 导入 JSON 数据
 import articlesData from '..//data/articles.json';
@@ -104,6 +104,7 @@ export default function Home() {
   const [typingDone, setTypingDone] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [isRandomizing, setIsRandomizing] = useState(false);
   
   // 分类内容的引用
   const categoryContentRef = useRef<HTMLDivElement>(null);
@@ -114,6 +115,61 @@ export default function Home() {
   
   const groupedArticles = useMemo(() => groupArticlesByCategory(sortedArticlesData), []);
   const categories = useMemo(() => Object.keys(groupedArticles), [groupedArticles]);
+  
+  // 随机选择文章，优先选择未读过的
+  const getRandomArticle = useCallback(() => {
+    // 检查localStorage中是否有阅读历史
+    const readHistory = localStorage.getItem('readArticleHistory');
+    const readArticleIds = readHistory ? JSON.parse(readHistory) : [];
+    
+    // 过滤出未读文章
+    const unreadArticles = sortedArticlesData.filter(article => !readArticleIds.includes(article.id));
+    
+    // 如果有未读文章，从中随机选择，否则从所有文章中随机选择
+    const articlesToChooseFrom = unreadArticles.length > 0 ? unreadArticles : sortedArticlesData;
+    const randomIndex = Math.floor(Math.random() * articlesToChooseFrom.length);
+    return articlesToChooseFrom[randomIndex];
+  }, []);
+  
+  // 记录阅读历史
+  const recordArticleView = useCallback((articleId: string) => {
+    if (typeof window === 'undefined') return;
+    
+    try {
+      // 获取现有的阅读历史
+      const readHistory = localStorage.getItem('readArticleHistory');
+      let readArticleIds = readHistory ? JSON.parse(readHistory) : [];
+      
+      // 如果这篇文章没有被记录过，添加到历史中
+      if (!readArticleIds.includes(articleId)) {
+        // 添加到阅读历史的开头
+        readArticleIds = [articleId, ...readArticleIds];
+        
+        // 限制历史记录数量，最多保存50条
+        if (readArticleIds.length > 50) {
+          readArticleIds = readArticleIds.slice(0, 50);
+        }
+        
+        // 保存回localStorage
+        localStorage.setItem('readArticleHistory', JSON.stringify(readArticleIds));
+      }
+    } catch (error) {
+      console.error('Error updating read history:', error);
+    }
+  }, []);
+  
+  // 跳转到随机文章，并添加视觉效果
+  const navigateToRandomArticle = useCallback(() => {
+    setIsRandomizing(true);
+    
+    // 添加一点延迟以显示动画效果
+    setTimeout(() => {
+      const randomArticle = getRandomArticle();
+      // 记录这篇文章将被阅读
+      recordArticleView(randomArticle.id);
+      window.open(`/article/${randomArticle.id}`, '_self');
+    }, 700);
+  }, [getRandomArticle, recordArticleView]);
   
   // 确保客户端挂载后再执行动态效果
   useEffect(() => {
@@ -221,6 +277,12 @@ export default function Home() {
   const renderArticleCard = (article: Article, index: number, isCarousel: boolean = false) => {
     const gradientColors = generateGradient(index, groupedArticles[article.category]?.length || 1);
     
+    // 处理文章点击
+    const handleArticleClick = () => {
+      recordArticleView(article.id);
+      window.open(`/article/${article.id}`, '_self');
+    };
+    
     const articleContent = (
       <>
         <h3 className={`text-xl font-medium mb-2 text-white ${isCarousel ? 'line-clamp-2' : ''}`}>{article.title}</h3>
@@ -232,12 +294,28 @@ export default function Home() {
         <div className="flex justify-between items-center">
           <span className="text-sm text-indigo-200">{article.date}</span>
           {!isCarousel && (
-            <Link href={`/article/${article.id}`} className="text-blue-300 hover:text-blue-200 hover:underline transition-colors">
+            <Link 
+              href={`/article/${article.id}`} 
+              onClick={() => recordArticleView(article.id)}
+              className="text-blue-300 hover:text-blue-200 hover:underline transition-colors"
+            >
               阅读全文 &rarr;
             </Link>
           )}
           {isCarousel && (
-            <span className="text-blue-300">阅读全文 &rarr;</span>
+            <span 
+              className="text-blue-300 hover:text-blue-200 hover:underline transition-colors cursor-pointer relative z-10 inline-flex items-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                recordArticleView(article.id);
+                window.open(`/article/${article.id}`, '_self');
+              }}
+            >
+              阅读全文 
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </span>
           )}
         </div>
       </>
@@ -252,7 +330,7 @@ export default function Home() {
           key={article.id} 
           className={isCarousel ? "h-full w-full" : "mb-6"}
           intensity={cardIntensity}
-          onClick={isCarousel ? undefined : () => window.open(`/article/${article.id}`, '_self')}
+          onClick={handleArticleClick}
         >
           {articleContent}
         </GlassCard>
@@ -268,7 +346,7 @@ export default function Home() {
           gradientTo={gradientColors.to}
           hoverScale={1.03}
           className="h-full w-full shadow-lg"
-          onClick={undefined}
+          onClick={handleArticleClick}
           hasGlow={false}
         >
           {articleContent}
@@ -282,7 +360,7 @@ export default function Home() {
         gradientFrom={gradientColors.from}
         gradientTo={gradientColors.to}
         className="mb-6"
-        onClick={() => window.open(`/article/${article.id}`, '_self')}
+        onClick={handleArticleClick}
       >
         {articleContent}
       </SimpleCard>
@@ -339,7 +417,7 @@ export default function Home() {
       </div>
     );
   };
-  
+
   return (
     <>
       {renderBackground()}
@@ -380,6 +458,32 @@ export default function Home() {
             >
               最新文章
             </button>
+            <button
+              className={`px-4 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
+                theme === '镜像' 
+                  ? 'bg-gradient-to-r from-cyan-500/40 to-blue-500/40' 
+                  : 'bg-gradient-to-r from-purple-500/40 to-blue-500/40'
+              } backdrop-blur-sm text-white hover:from-cyan-500/60 hover:to-blue-500/60`}
+              onClick={navigateToRandomArticle}
+              disabled={isRandomizing}
+            >
+              {isRandomizing ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  正在传送...
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+                  </svg>
+                  随机探索宇宙
+                </>
+              )}
+            </button>
           </div>
         )}
 
@@ -402,8 +506,39 @@ export default function Home() {
           }`}>
             {theme === '镜像' ? '探索数据流动中的思维碰撞与创意折射' : '探索思想，穿梭在科技与想象的星际间'}
           </p>
-        </header>
-        
+          
+          {isMounted && (
+            <button
+              onClick={navigateToRandomArticle}
+              disabled={isRandomizing}
+              className={`mt-6 px-6 py-2 rounded-full text-white font-medium transition-all duration-500 ${isRandomizing ? 'scale-110' : 'hover:scale-105'} ${
+                theme === '镜像'
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:shadow-lg hover:shadow-cyan-500/25'
+                  : 'bg-gradient-to-r from-indigo-500 to-purple-500 hover:shadow-lg hover:shadow-indigo-500/25'
+              } ${isRandomizing ? 'animate-pulse' : 'hover:animate-pulse'}`}
+            >
+              <span className="flex items-center">
+                {isRandomizing ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    正在传送...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+                    </svg>
+                    随机探索宇宙
+                  </>
+                )}
+              </span>
+            </button>
+          )}
+      </header>
+
         {/* 分类卡片区域 */}
         <div ref={categoriesRef} className={`transition-opacity duration-500 ${isMounted && typingDone ? 'opacity-100' : 'opacity-0'}`}>
           <h2 className="text-2xl font-semibold text-white mb-6">文章分类</h2>
@@ -481,7 +616,10 @@ export default function Home() {
                           <div 
                             key={article.id} 
                             className="w-[300px] h-[280px]"
-                            onClick={() => window.open(`/article/${article.id}`, '_self')}
+                            onClick={() => {
+                              recordArticleView(article.id);
+                              window.open(`/article/${article.id}`, '_self');
+                            }}
                           >
                             {renderArticleCard(article, index, true)}
                           </div>
@@ -502,7 +640,39 @@ export default function Home() {
           
           {/* 最新文章列表 */}
           <div ref={latestArticlesRef} className="mb-12 scroll-mt-28">
-            <h2 className="text-2xl font-semibold text-white mb-6 border-b border-white/10 pb-2">最新文章</h2>
+            <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-2">
+              <h2 className="text-2xl font-semibold text-white">最新文章</h2>
+              
+              <div className="flex items-center space-x-4">
+                <button 
+                  onClick={navigateToRandomArticle}
+                  disabled={isRandomizing}
+                  className={`flex items-center text-sm rounded-full px-3 py-1 ${
+                    theme === '镜像' 
+                      ? 'text-cyan-300 hover:text-cyan-200' 
+                      : 'text-indigo-300 hover:text-indigo-200'
+                  } transition-colors ${isRandomizing ? 'opacity-70' : ''}`}
+                >
+                  {isRandomizing ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      传送中...
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M13 6V4H7v2h6zm-4 7h2V8H9v5z" />
+                        <path fillRule="evenodd" d="M7 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2V3a1 1 0 00-1-1H7zm5 10V8H8v4h4z" clipRule="evenodd" />
+                      </svg>
+                      随机跳跃
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {sortedArticlesData.slice(0, 6).map((article, index) => (
                 renderArticleCard(article, index)
@@ -510,7 +680,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </main>
+    </main>
     </>
   );
 }

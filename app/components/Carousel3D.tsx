@@ -69,7 +69,23 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
   };
 
   // Touch and Mouse event handlers for dragging
-  const handleDragStart = (clientX: number) => {
+  const handleDragStart = (clientX: number, event?: React.MouseEvent | React.TouchEvent) => {
+    // Don't initiate drag if the click target is a link, button, or has specific class
+    if (event) {
+      const target = event.target as HTMLElement;
+      // Check if clicking on a link, button, or other interactive element
+      if (
+        target.tagName === 'A' || 
+        target.tagName === 'BUTTON' || 
+        target.closest('a') || 
+        target.closest('button') ||
+        target.classList.contains('text-blue-300') ||  // The "阅读全文" class
+        target.classList.contains('cursor-pointer')
+      ) {
+        return;
+      }
+    }
+    
     setIsDragging(true);
     setStartX(clientX);
     setCurrentX(clientX);
@@ -99,7 +115,7 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
   // Mouse event handlers
   const handleMouseDown = (e: React.MouseEvent) => {
     if (autoRotate) return;
-    handleDragStart(e.clientX);
+    handleDragStart(e.clientX, e);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -113,7 +129,7 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
   // Touch event handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     if (autoRotate) return;
-    handleDragStart(e.touches[0].clientX);
+    handleDragStart(e.touches[0].clientX, e);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -156,8 +172,11 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
         style={{
           perspective: `${perspective}px`,
           minHeight: '300px',
-          touchAction: 'none'
+          touchAction: 'pan-y',
+          pointerEvents: 'auto'
         }}
+        data-prevent-clicks="false"
+        data-prevent-clicks-propagation="false"
         onMouseDown={handleMouseDown}
         onMouseMove={isDragging ? handleMouseMove : undefined}
         onMouseUp={handleMouseUp}
@@ -201,7 +220,12 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
                   backfaceVisibility: 'hidden',
                   zIndex: isActive ? 10 : (10 - circularDistance)
                 }}
-                onClick={() => !isActive && goToIndex(index)}
+                onClick={(e) => {
+                  if (!isActive) {
+                    goToIndex(index);
+                  }
+                  // Don't stop propagation for active items to allow clicks on inner elements
+                }}
               >
                 <div 
                   className="w-full h-full transition-all duration-300"
@@ -210,9 +234,48 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
                     opacity: isActive ? 1 : (1 - circularDistance * 0.2),
                     filter: isActive ? 'none' : `brightness(${1 - circularDistance * 0.15})`,
                     boxShadow: isActive ? '0 10px 30px rgba(0, 0, 0, 0.25)' : 'none',
-                    pointerEvents: isActive ? 'none' : 'auto'
+                    pointerEvents: 'auto'
                   }}
                 >
+                  {/* 添加发光效果和高光 */}
+                  {isActive && (
+                    <div className="absolute inset-0 -z-10 rounded-lg overflow-hidden">
+                      <div 
+                        className="absolute inset-0 opacity-40 animate-pulse" 
+                        style={{
+                          background: 'var(--gradient-primary, linear-gradient(to right, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3)))',
+                          filter: 'blur(15px)',
+                        }}
+                      />
+                      <div 
+                        className="absolute inset-0 opacity-70"
+                        style={{
+                          background: 'radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.2), transparent 50%)',
+                        }}
+                      />
+                    </div>
+                  )}
+                  
+                  {/* 旋转粒子效果 */}
+                  {isActive && (
+                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden rounded-lg">
+                      {[...Array(6)].map((_, i) => (
+                        <div 
+                          key={i}
+                          className="absolute w-2 h-2 rounded-full bg-white/80"
+                          style={{
+                            top: `${Math.random() * 100}%`,
+                            left: `${Math.random() * 100}%`,
+                            animation: `floatParticle ${3 + Math.random() * 4}s infinite linear`,
+                            opacity: 0.4 + Math.random() * 0.6,
+                            transform: `scale(${0.5 + Math.random() * 0.5})`,
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* 原有子元素 */}
                   {child}
                 </div>
               </div>
@@ -236,6 +299,26 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
           />
         ))}
       </div>
+
+      {/* 全局动画样式 */}
+      <style jsx global>{`
+        @keyframes floatParticle {
+          0% {
+            transform: translate(0, 0) rotate(0deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            transform: translate(${Math.random() > 0.5 ? '' : '-'}${50 + Math.random() * 100}px, ${Math.random() > 0.5 ? '' : '-'}${50 + Math.random() * 100}px) rotate(360deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 };

@@ -81,9 +81,61 @@ const generateGradient = (index: number) => {
 
 export default function CategoryPage() {
   const params = useParams();
-  const categorySlug = decodeURIComponent(params.slug as string);
+  
+  const [categorySlug, setCategorySlug] = useState<string>('');
+  const [displayName, setDisplayName] = useState<string>('');
+  const [sortedArticles, setSortedArticles] = useState<Article[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [theme, setTheme] = useState<ThemeType>('星空感');
+  
+  // 设置分类信息
+  useEffect(() => {
+    if (params && params.slug) {
+      const slug = decodeURIComponent(params.slug as string);
+      setCategorySlug(slug);
+      setDisplayName(getCategoryDisplayName(slug));
+    }
+  }, [params]);
+  
+  // 加载文章
+  useEffect(() => {
+    if (categorySlug) {
+      // 过滤出此分类的文章
+      const categoryDisplayName = getCategoryDisplayName(categorySlug);
+      const articles = typedArticlesData.filter(
+        article => {
+          // 使用显示名称和slug都进行匹配
+          return article.category.trim() === categoryDisplayName || 
+                getSlugFromCategoryName(article.category.trim()) === categorySlug;
+        }
+      );
+      
+      // 按日期排序文章（从新到旧）
+      const sorted = [...articles].sort((a, b) => {
+        // 提取年份和月份进行比较
+        const aMatch = a.date.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+        const bMatch = b.date.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+        
+        if (aMatch && bMatch) {
+          // 首先比较年份
+          const yearDiff = parseInt(bMatch[1]) - parseInt(aMatch[1]);
+          if (yearDiff !== 0) return yearDiff;
+          
+          // 年份相同，比较月份
+          const monthDiff = parseInt(bMatch[2]) - parseInt(aMatch[2]);
+          if (monthDiff !== 0) return monthDiff;
+          
+          // 月份相同，比较日期
+          return parseInt(bMatch[3]) - parseInt(aMatch[3]);
+        }
+        
+        // 如果解析失败，保持原顺序
+        return 0;
+      });
+      
+      setSortedArticles(sorted);
+    }
+  }, [categorySlug]);
   
   useEffect(() => {
     setIsMounted(true);
@@ -96,41 +148,6 @@ export default function CategoryPage() {
       }
     }
   }, []);
-  
-  // 获取显示名称
-  const displayName = getCategoryDisplayName(categorySlug);
-  
-  // 过滤出此分类的文章
-  const articles = typedArticlesData.filter(
-    article => {
-      // 使用显示名称和slug都进行匹配
-      return article.category.trim() === displayName || 
-             getSlugFromCategoryName(article.category.trim()) === categorySlug;
-    }
-  );
-  
-  // 按日期排序文章（从新到旧）
-  const sortedArticles = [...articles].sort((a, b) => {
-    // 提取年份和月份进行比较
-    const aMatch = a.date.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
-    const bMatch = b.date.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
-    
-    if (aMatch && bMatch) {
-      // 首先比较年份
-      const yearDiff = parseInt(bMatch[1]) - parseInt(aMatch[1]);
-      if (yearDiff !== 0) return yearDiff;
-      
-      // 年份相同，比较月份
-      const monthDiff = parseInt(bMatch[2]) - parseInt(aMatch[2]);
-      if (monthDiff !== 0) return monthDiff;
-      
-      // 月份相同，比较日期
-      return parseInt(bMatch[3]) - parseInt(aMatch[3]);
-    }
-    
-    // 如果解析失败，保持原顺序
-    return 0;
-  });
   
   // 根据主题返回适合的背景组件
   const renderBackground = () => {

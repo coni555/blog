@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import ThemeToggle from './ThemeToggle';
+import { useTheme } from '../providers/ThemeProvider';
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -67,7 +69,7 @@ const Navbar = () => {
         </Link>
 
         {/* 导航链接 */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-6">
           <Link 
             href="/" 
             className={`text-gray-100 hover:text-indigo-300 transition-colors ${pathname === '/' ? 'font-medium text-indigo-300' : ''}`}
@@ -147,6 +149,9 @@ const Navbar = () => {
           >
             关于我
           </Link>
+
+          {/* 主题切换器 */}
+          <ThemeToggle />
         </div>
 
         {/* 移动端菜单按钮 */}
@@ -242,6 +247,12 @@ const Navbar = () => {
             >
               关于我
             </Link>
+
+            {/* 添加主题切换 */}
+            <div className="py-2">
+              <p className="text-gray-300 mb-2">选择主题</p>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       )}
