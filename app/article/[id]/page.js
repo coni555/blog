@@ -1,12 +1,10 @@
 import Link from 'next/link';
-import articlesData from '../../../data/articles.json';
 
-// 简化类型定义，避免TypeScript复杂类型问题
-type Article = any;
-
-export default function Page({ params }: { params: { id: string } }) {
-  const article = (articlesData as Article[]).find(a => a.id === params.id);
-
+export default function Page({ params }) {
+  // 简单查找文章
+  const articlesData = require('../../../data/articles.json');
+  const article = articlesData.find(a => a.id === params.id);
+  
   if (!article) {
     return (
       <div className="p-8 text-center">
@@ -16,7 +14,7 @@ export default function Page({ params }: { params: { id: string } }) {
       </div>
     );
   }
-
+  
   return (
     <div className="p-8">
       <Link href="/">返回首页</Link>
