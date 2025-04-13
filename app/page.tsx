@@ -11,7 +11,7 @@ import GlassCard from './components/GlassCard';
 import Carousel3D from './components/Carousel3D';
 import SimpleCard from './components/SimpleCard';
 import DataFlowBackground from './components/DataFlowBackground';
-import { getLinkHref } from './utils/urlHelper';
+import { getLinkHref, getNavigationUrl } from './utils/urlHelper';
 
 // 定义文章类型（与详情页一致）
 type Article = {
@@ -168,7 +168,7 @@ export default function Home() {
       const randomArticle = getRandomArticle();
       // 记录这篇文章将被阅读
       recordArticleView(randomArticle.id);
-      window.open(getLinkHref(`/article/${randomArticle.id}`), '_self');
+      window.open(getNavigationUrl(`/article/${randomArticle.id}`), '_self');
     }, 700);
   }, [getRandomArticle, recordArticleView]);
   
@@ -281,7 +281,7 @@ export default function Home() {
     // 处理文章点击
     const handleArticleClick = () => {
       recordArticleView(article.id);
-      window.open(getLinkHref(`/article/${article.id}`), '_self');
+      window.open(getNavigationUrl(`/article/${article.id}`), '_self');
     };
     
     const articleContent = (
@@ -309,7 +309,7 @@ export default function Home() {
               onClick={(e) => {
                 e.stopPropagation();
                 recordArticleView(article.id);
-                window.open(getLinkHref(`/article/${article.id}`), '_self');
+                window.open(getNavigationUrl(`/article/${article.id}`), '_self');
               }}
             >
               阅读全文 
@@ -619,7 +619,7 @@ export default function Home() {
                             className="w-[300px] h-[280px]"
                             onClick={() => {
                               recordArticleView(article.id);
-                              window.open(getLinkHref(`/article/${article.id}`), '_self');
+                              window.open(getNavigationUrl(`/article/${article.id}`), '_self');
                             }}
                           >
                             {renderArticleCard(article, index, true)}

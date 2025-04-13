@@ -7,7 +7,7 @@ import GlassCard from '../../components/GlassCard';
 import StarBackground from '../../components/StarBackground';
 import DataFlowBackground from '../../components/DataFlowBackground';
 import articlesData from '../../../data/articles.json';
-import { getLinkHref } from '../../utils/urlHelper';
+import { getLinkHref, getNavigationUrl } from '../../utils/urlHelper';
 
 // 获取分类映射表（URL参数到显示名称）
 const getCategoryDisplayName = (slug) => {
@@ -186,7 +186,7 @@ export default function CategoryClientPage({ slug }) {
                     key={article.id}
                     className="shadow-lg"
                     intensity={1.05}
-                    onClick={() => window.open(getLinkHref(`/article/${article.id}`), '_self')}
+                    onClick={() => window.open(getNavigationUrl(`/article/${article.id}`), '_self')}
                   >
                     {articleContent}
                   </GlassCard>
