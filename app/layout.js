@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import './globals.css';
+import HtmlHead from './components/HtmlHead';
 
 export const metadata = {
   title: 'Coni的博客',
@@ -10,6 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-CN">
       <head>
+        <HtmlHead />
         <script dangerouslySetInnerHTML={{
           __html: `
             // 检查当前URL是否缺少/blog前缀

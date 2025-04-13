@@ -17,8 +17,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 获取完整历史记录以确保正确处理
       
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -33,19 +31,20 @@ jobs:
         run: |
           rm -rf .next
           rm -rf out
-          echo "Cleaned previous build cache"
+          # 确保环境变量设置对
+          echo "NEXT_PUBLIC_DEPLOY_TARGET=github" >> .env.local
+          echo "NEXT_PUBLIC_REPO_NAME=blog" >> .env.local
       
       - name: Build with Next.js
         run: |
           npm run build:github
           touch out/.nojekyll
           # 复制404页面和CNAME文件到根目录
-          cp 404.html out/404.html || echo "404.html not found"
-          cp CNAME out/CNAME || echo "CNAME not found"
-          # 确保添加根路径重定向
-          echo '<meta http-equiv="refresh" content="0;url=/blog/" />' > out/index.html
-          # 输出构建信息
-          ls -la out/
+          cp 404.html out/404.html || true
+          cp CNAME out/CNAME || true
+          # 确保urlHelper.js正确工作的额外JS脚本
+          echo "window.NEXT_PUBLIC_DEPLOY_TARGET='github';" > out/_next/static/chunks/github-env.js
+          echo "window.NEXT_PUBLIC_REPO_NAME='blog';" >> out/_next/static/chunks/github-env.js
         env:
           DEPLOY_TARGET: github
           NEXT_PUBLIC_DEPLOY_TARGET: github

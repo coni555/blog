@@ -10,11 +10,22 @@ export function getCorrectPath(path) {
     path = '/' + path;
   }
   
+  // 强制为GitHub Pages环境
+  const FORCE_GITHUB_PAGES = true;
+  
   // 更可靠的GitHub Pages检测
   const isGitHubPages = () => {
+    // 强制为真
+    if (FORCE_GITHUB_PAGES) return true;
+    
     if (typeof window === 'undefined') return false;
     
     // 优先使用环境变量
+    if (typeof window.NEXT_PUBLIC_DEPLOY_TARGET !== 'undefined' && 
+        window.NEXT_PUBLIC_DEPLOY_TARGET === 'github') {
+      return true;
+    }
+    
     if (process.env.NEXT_PUBLIC_DEPLOY_TARGET === 'github') return true;
     
     // 其次检查hostname
