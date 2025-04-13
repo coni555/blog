@@ -480,14 +480,14 @@ export default function Home() {
       articleCards.forEach(card => {
         card.addEventListener('click', (e) => {
           // 检查是否点击了卡片内部的链接
-          const target = e.target;
-          if (target && (target.tagName === 'A' || target.closest('a'))) {
+          const target = e.target as Node;
+          if (target && ((target as HTMLElement).tagName === 'A' || (target as HTMLElement).closest?.('a'))) {
             // 链接点击会由上面的处理器处理
             return;
           }
           
           // 从卡片本身获取文章ID
-          const articleId = card.getAttribute('data-article-id');
+          const articleId = (card as HTMLElement).getAttribute('data-article-id');
           if (articleId) {
             e.preventDefault();
             e.stopPropagation();
@@ -511,17 +511,18 @@ export default function Home() {
           for (const node of mutation.addedNodes) {
             if (node.nodeType === 1) { // 元素节点
               // 如果添加了新的文章卡片、链接或分类区域
-              if (node.classList && 
-                 (node.classList.contains('article-card') || 
-                  node.classList.contains('latest-articles') || 
-                  node.classList.contains('category-section'))) {
+              const element = node as HTMLElement;
+              if (element.classList && 
+                  (element.classList.contains('article-card') || 
+                  element.classList.contains('latest-articles') || 
+                  element.classList.contains('category-section'))) {
                 needsFix = true;
                 break;
               }
               
               // 或者添加的节点内部包含这些元素
-              if (node.querySelector && 
-                 (node.querySelector('.article-card, .latest-articles, .category-section, a[href]'))) {
+              if (element.querySelector && 
+                  (element.querySelector('.article-card, .latest-articles, .category-section, a[href]'))) {
                 needsFix = true;
                 break;
               }

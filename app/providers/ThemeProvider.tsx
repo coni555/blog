@@ -117,6 +117,40 @@ const ClientThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children
     `;
     document.head.appendChild(style);
     
+    // 强制加载链接修复脚本
+    try {
+      console.log('🚀 主题提供者: 强制加载链接修复脚本');
+      const timestamp = new Date().getTime(); // 添加时间戳防止缓存
+      
+      // 检查是否已经加载过脚本
+      const existingScript = document.getElementById('global-link-fix-script');
+      if (existingScript) {
+        document.body.removeChild(existingScript);
+      }
+      
+      // 创建新脚本
+      const script = document.createElement('script');
+      script.id = 'global-link-fix-script';
+      
+      // 检测是否在GitHub Pages环境
+      const isGitHubPages = window.location.hostname.includes('github.io');
+      const scriptPath = isGitHubPages ? '/blog/link-fix.js' : '/link-fix.js';
+      script.src = `${scriptPath}?v=${timestamp}`;
+      script.async = true;
+      document.body.appendChild(script);
+      
+      // 监听脚本加载完成事件
+      script.onload = () => {
+        console.log('✅ 链接修复脚本已加载');
+      };
+      
+      script.onerror = (err) => {
+        console.error('❌ 链接修复脚本加载失败:', err);
+      };
+    } catch (err) {
+      console.error('加载链接修复脚本失败:', err);
+    }
+    
     return () => {
       document.head.removeChild(style);
     };

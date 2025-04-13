@@ -56,6 +56,24 @@ export default function ArticleContent({ id }) {
       if (savedTheme) {
         setTheme(savedTheme);
       }
+      
+      // 强制加载链接修复脚本
+      try {
+        console.log('🔄 强制重新加载链接修复');
+        // 动态加载link-fix.js脚本
+        const existingScript = document.getElementById('link-fix-script');
+        if (existingScript) {
+          document.body.removeChild(existingScript);
+        }
+        
+        const script = document.createElement('script');
+        script.id = 'link-fix-script';
+        script.src = '/blog/link-fix.js?v=' + new Date().getTime(); // 添加时间戳防止缓存
+        script.async = true;
+        document.body.appendChild(script);
+      } catch (err) {
+        console.error('加载链接修复脚本失败:', err);
+      }
     }
   }, []);
   
@@ -327,7 +345,22 @@ export default function ArticleContent({ id }) {
             <h2 className="text-2xl font-semibold text-white mb-6 border-b border-white/10 pb-2">相关推荐</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedArticles.map(relatedArticle => (
-                <Link key={relatedArticle.id} href={getLinkHref(`/article/${relatedArticle.id}`)}>
+                <Link 
+                  key={relatedArticle.id} 
+                  href={getLinkHref(`/article/${relatedArticle.id}`)}
+                  onClick={(e) => {
+                    // 强制处理点击事件
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // 构建正确的URL
+                    const targetUrl = getLinkHref(`/article/${relatedArticle.id}`);
+                    console.log('相关文章直接点击:', relatedArticle.id, '->', targetUrl);
+                    
+                    // 使用window.location直接导航
+                    window.location.href = targetUrl;
+                  }}
+                >
                   <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-4 h-full hover:bg-white/10 transition-all duration-300 hover:scale-105">
                     <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">{relatedArticle.title}</h3>
                     <p className="text-indigo-200 text-sm line-clamp-2">{relatedArticle.summary || ""}</p>
