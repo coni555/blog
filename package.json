@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:github": "cross-env DEPLOY_TARGET=github next build",
+    "export": "next export",
+    "deploy:github": "npm run build:github && touch out/.nojekyll && gh-pages -d out"
   },
   "dependencies": {
     "framer-motion": "^12.6.5",
@@ -22,6 +25,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^7.0.3",
+    "gh-pages": "^6.3.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
