@@ -39,10 +39,29 @@ jobs:
         run: |
           npm run build:github
           touch out/.nojekyll
-          # 复制404页面和CNAME文件到根目录
+          # 复制404页面和CNAME文件以及修复脚本到输出目录
           cp 404.html out/404.html || true
           cp CNAME out/CNAME || true
+          cp public/link-fix.js out/link-fix.js || true
+          
+          # 创建注入到所有HTML的脚本
+          echo '<script>
+          // GitHub Pages路径修复
+          if(window.location.hostname.includes("github.io") && !window.location.pathname.startsWith("/blog")) {
+            window.location.href = "/blog" + window.location.pathname;
+          }
+          
+          // 加载链接修复脚本
+          var script = document.createElement("script");
+          script.src = "/blog/link-fix.js";
+          document.head.appendChild(script);
+          </script>' > link-fix-inline.html
+          
+          # 注入到所有HTML文件中
+          find out -name "*.html" -exec sh -c 'sed -i "s/<head>/<head>$(cat link-fix-inline.html | tr "\n" " ")/" {}' \;
+          
           # 确保urlHelper.js正确工作的额外JS脚本
+          mkdir -p out/_next/static/chunks
           echo "window.NEXT_PUBLIC_DEPLOY_TARGET='github';" > out/_next/static/chunks/github-env.js
           echo "window.NEXT_PUBLIC_REPO_NAME='blog';" >> out/_next/static/chunks/github-env.js
         env:
