@@ -1,19 +1,18 @@
-// 服务器组件部分，处理静态生成
+// 基础服务器组件
 export default function SearchPage() {
-  return <SearchContent />;
+  return <ClientSearchPage />;
 }
 
-// 客户端组件处理交互
-'use client';
+// 分离的客户端组件文件
+"use client";
 
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import StarBackground from '../components/StarBackground';
 import DataFlowBackground from '../components/DataFlowBackground';
 
-// 创建一个单独的组件来使用useSearchParams
-function SearchContent() {
+function ClientSearchPage() {
   const searchParams = useSearchParams();
   const queryParam = searchParams ? searchParams.get('q') : '';
   const [query, setQuery] = useState('');
