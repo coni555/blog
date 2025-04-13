@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { getLinkHref } from '../utils/urlHelper';
 
 interface ArticleCardProps {
   id: string;
@@ -102,7 +103,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       
       <div className="flex justify-between items-center">
         <Link 
-          href={`/article/${id}`} 
+          href={getLinkHref(`/article/${id}`)}
           className={`text-indigo-300 text-sm hover:text-indigo-200 transition-all duration-300 
             flex items-center gap-1 group
             ${isHovered ? 'text-indigo-200 pl-1' : ''}`}

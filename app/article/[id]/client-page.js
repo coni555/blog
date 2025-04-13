@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import StarBackground from '../../components/StarBackground';
 import DataFlowBackground from '../../components/DataFlowBackground';
+import { getLinkHref } from '../../utils/urlHelper';
 
 export default function ArticleContent({ id }) {
   const articleId = id;
@@ -109,7 +110,7 @@ export default function ArticleContent({ id }) {
         {/* 返回按钮 */}
         <div className="max-w-3xl mx-auto mb-6">
           <Link 
-            href="/" 
+            href={getLinkHref("/")}
             className="inline-flex items-center text-indigo-300 hover:text-indigo-100 transition-all duration-300 hover:scale-105"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -233,7 +234,7 @@ export default function ArticleContent({ id }) {
             <h2 className="text-2xl font-semibold text-white mb-6 border-b border-white/10 pb-2">相关推荐</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedArticles.map(relatedArticle => (
-                <Link key={relatedArticle.id} href={`/article/${relatedArticle.id}`}>
+                <Link key={relatedArticle.id} href={getLinkHref(`/article/${relatedArticle.id}`)}>
                   <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-4 h-full hover:bg-white/10 transition-all duration-300 hover:scale-105">
                     <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">{relatedArticle.title}</h3>
                     <p className="text-indigo-200 text-sm line-clamp-2">{relatedArticle.summary || ""}</p>

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import StarBackground from '../components/StarBackground';
 import DataFlowBackground from '../components/DataFlowBackground';
+import { getLinkHref } from '../utils/urlHelper';
 
 export default function ClientSearchPage() {
   const searchParams = useSearchParams();
@@ -86,7 +87,7 @@ export default function ClientSearchPage() {
       <div className="min-h-screen p-8 max-w-4xl mx-auto relative z-10">
         {/* 面包屑导航 */}
         <div className="mb-6 flex items-center text-sm text-indigo-300">
-          <Link href="/" className="hover:text-indigo-100 transition-colors hover:scale-105 inline-flex items-center">
+          <Link href={getLinkHref("/")} className="hover:text-indigo-100 transition-colors hover:scale-105 inline-flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
             </svg>
@@ -143,7 +144,7 @@ export default function ClientSearchPage() {
         {searchResults.length > 0 ? (
           <div className="space-y-6">
             {searchResults.map((article) => (
-              <Link key={article.id} href={`/article/${article.id}`} className="block">
+              <Link key={article.id} href={getLinkHref(`/article/${article.id}`)} className="block">
                 <article className={`border rounded-lg p-6 hover:transform hover:scale-[1.01] transition-all duration-300 ${
                   theme === '镜像' 
                     ? 'border-white/10 bg-black/30 backdrop-blur-md hover:bg-black/40' 
@@ -173,7 +174,7 @@ export default function ClientSearchPage() {
               <p className="mt-4 text-indigo-200">尝试使用其他关键词或浏览分类目录</p>
               <div className="mt-8 space-x-4">
                 <Link 
-                  href="/" 
+                  href={getLinkHref("/")}
                   className={`inline-block px-6 py-2 rounded-full transition-all hover:scale-105 ${
                     theme === '镜像' 
                       ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white' 

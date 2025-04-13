@@ -7,6 +7,7 @@ import GlassCard from '../../components/GlassCard';
 import StarBackground from '../../components/StarBackground';
 import DataFlowBackground from '../../components/DataFlowBackground';
 import articlesData from '../../../data/articles.json';
+import { getLinkHref } from '../../utils/urlHelper';
 
 // 获取分类映射表（URL参数到显示名称）
 const getCategoryDisplayName = (slug) => {
@@ -153,7 +154,7 @@ export default function CategoryClientPage({ slug }) {
       {renderBackground()}
       <main className="min-h-screen p-8 max-w-5xl mx-auto relative z-10">
         <div className="pt-20 mb-8">
-          <Link href="/" className="text-indigo-300 hover:text-indigo-200 transition-colors mb-4 inline-block">
+          <Link href={getLinkHref("/")} className="text-indigo-300 hover:text-indigo-200 transition-colors mb-4 inline-block">
             &larr; 返回首页
           </Link>
           <h1 className="text-3xl font-bold text-white mb-2">
@@ -172,7 +173,7 @@ export default function CategoryClientPage({ slug }) {
                   {article.summary && <p className="text-indigo-100 mb-3 opacity-90 line-clamp-3">{article.summary}</p>}
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-indigo-200">{article.date}</span>
-                    <Link href={`/article/${article.id}`} className="text-blue-300 hover:text-blue-200 hover:underline transition-colors">
+                    <Link href={getLinkHref(`/article/${article.id}`)} className="text-blue-300 hover:text-blue-200 hover:underline transition-colors">
                       阅读全文 &rarr;
                     </Link>
                   </div>
@@ -185,7 +186,7 @@ export default function CategoryClientPage({ slug }) {
                     key={article.id}
                     className="shadow-lg"
                     intensity={1.05}
-                    onClick={() => window.open(`/article/${article.id}`, '_self')}
+                    onClick={() => window.open(getLinkHref(`/article/${article.id}`), '_self')}
                   >
                     {articleContent}
                   </GlassCard>
@@ -210,14 +211,14 @@ export default function CategoryClientPage({ slug }) {
             {theme === '镜像' ? (
               <GlassCard className="py-12 text-center">
                 <p className="text-white text-xl">该分类下暂无文章</p>
-                <Link href="/" className="text-blue-300 hover:text-blue-200 mt-4 inline-block">
+                <Link href={getLinkHref("/")} className="text-blue-300 hover:text-blue-200 mt-4 inline-block">
                   返回首页
                 </Link>
               </GlassCard>
             ) : (
               <div className="bg-indigo-900/20 border border-indigo-800/30 rounded-xl p-8 text-center backdrop-blur-sm">
                 <p className="text-white text-xl">该分类下暂无文章</p>
-                <Link href="/" className="text-blue-300 hover:text-blue-200 mt-4 inline-block">
+                <Link href={getLinkHref("/")} className="text-blue-300 hover:text-blue-200 mt-4 inline-block">
                   返回首页
                 </Link>
               </div>

@@ -11,6 +11,7 @@ import GlassCard from './components/GlassCard';
 import Carousel3D from './components/Carousel3D';
 import SimpleCard from './components/SimpleCard';
 import DataFlowBackground from './components/DataFlowBackground';
+import { getLinkHref } from './utils/urlHelper';
 
 // 定义文章类型（与详情页一致）
 type Article = {
@@ -167,7 +168,7 @@ export default function Home() {
       const randomArticle = getRandomArticle();
       // 记录这篇文章将被阅读
       recordArticleView(randomArticle.id);
-      window.open(`/article/${randomArticle.id}`, '_self');
+      window.open(getLinkHref(`/article/${randomArticle.id}`), '_self');
     }, 700);
   }, [getRandomArticle, recordArticleView]);
   
@@ -280,7 +281,7 @@ export default function Home() {
     // 处理文章点击
     const handleArticleClick = () => {
       recordArticleView(article.id);
-      window.open(`/article/${article.id}`, '_self');
+      window.open(getLinkHref(`/article/${article.id}`), '_self');
     };
     
     const articleContent = (
@@ -295,7 +296,7 @@ export default function Home() {
           <span className="text-sm text-indigo-200">{article.date}</span>
           {!isCarousel && (
             <Link 
-              href={`/article/${article.id}`} 
+              href={getLinkHref(`/article/${article.id}`)}
               onClick={() => recordArticleView(article.id)}
               className="text-blue-300 hover:text-blue-200 hover:underline transition-colors"
             >
@@ -308,7 +309,7 @@ export default function Home() {
               onClick={(e) => {
                 e.stopPropagation();
                 recordArticleView(article.id);
-                window.open(`/article/${article.id}`, '_self');
+                window.open(getLinkHref(`/article/${article.id}`), '_self');
               }}
             >
               阅读全文 
@@ -595,7 +596,7 @@ export default function Home() {
                 <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-2">
                   <h2 className="text-2xl font-semibold text-white">{activeCategory} · 精选文章</h2>
                   <Link 
-                    href={`/category/${getSlugFromCategoryName(activeCategory)}`}
+                    href={getLinkHref(`/category/${getSlugFromCategoryName(activeCategory)}`)}
                     className="text-indigo-300 hover:text-indigo-200 transition-colors text-sm"
                   >
                     查看全部 &rarr;
@@ -618,7 +619,7 @@ export default function Home() {
                             className="w-[300px] h-[280px]"
                             onClick={() => {
                               recordArticleView(article.id);
-                              window.open(`/article/${article.id}`, '_self');
+                              window.open(getLinkHref(`/article/${article.id}`), '_self');
                             }}
                           >
                             {renderArticleCard(article, index, true)}

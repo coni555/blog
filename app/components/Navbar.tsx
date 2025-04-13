@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from '../providers/ThemeProvider';
+import { getLinkHref } from '../utils/urlHelper';
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -71,7 +72,7 @@ const Navbar = () => {
         {/* 导航链接 */}
         <div className="hidden md:flex items-center space-x-6">
           <Link 
-            href="/" 
+            href={getLinkHref("/")}
             className={`text-gray-100 hover:text-indigo-300 transition-colors ${pathname === '/' ? 'font-medium text-indigo-300' : ''}`}
           >
             首页
@@ -100,7 +101,7 @@ const Navbar = () => {
                 {categories.map((category) => (
                   <Link
                     key={category.name}
-                    href={category.href}
+                    href={getLinkHref(category.href)}
                     className="block px-4 py-2 text-sm text-gray-100 hover:bg-gray-700/80 hover:text-indigo-300"
                     onClick={() => setIsDropdownOpen(false)}
                   >
@@ -144,7 +145,7 @@ const Navbar = () => {
 
           {/* 关于我 */}
           <Link
-            href="/about"
+            href={getLinkHref("/about")}
             className={`text-gray-100 hover:text-indigo-300 transition-colors ${pathname === '/about' ? 'font-medium text-indigo-300' : ''}`}
           >
             关于我
@@ -181,7 +182,7 @@ const Navbar = () => {
         <div className="md:hidden bg-gray-900/95 backdrop-blur-md shadow-lg">
           <div className="p-4 space-y-4">
             <Link 
-              href="/" 
+              href={getLinkHref("/")} 
               className={`block py-2 text-gray-100 hover:text-indigo-300 transition-colors ${pathname === '/' ? 'font-medium text-indigo-300' : ''}`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -226,7 +227,7 @@ const Navbar = () => {
                   {categories.map((category) => (
                     <Link
                       key={category.name}
-                      href={category.href}
+                      href={getLinkHref(category.href)}
                       className="block py-1.5 text-sm text-gray-100 hover:text-indigo-300"
                       onClick={() => {
                         setIsDropdownOpen(false);
@@ -241,7 +242,7 @@ const Navbar = () => {
             </div>
             
             <Link 
-              href="/about" 
+              href={getLinkHref("/about")} 
               className={`block py-2 text-gray-100 hover:text-indigo-300 transition-colors ${pathname === '/about' ? 'font-medium text-indigo-300' : ''}`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
