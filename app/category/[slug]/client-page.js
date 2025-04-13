@@ -132,6 +132,104 @@ export default function CategoryClientPage({ slug }) {
     }
   }, []);
   
+  // 添加特殊导航修复
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // 处理分类页面的文章链接点击
+    const fixCategoryPageLinks = () => {
+      try {
+        // 1. 修复所有文章链接
+        const articleLinks = document.querySelectorAll('a[href*="/article/"]');
+        articleLinks.forEach(link => {
+          // 保存原始href
+          const originalHref = link.getAttribute('href');
+          
+          // 添加点击劫持
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // 提取文章ID
+            const parts = originalHref.split('/article/');
+            if (parts.length > 1) {
+              const articleId = parts[1].split('/')[0];
+              
+              // 构建正确的URL
+              const isGitHubPages = window.location.hostname.includes('github.io');
+              const blogPrefix = isGitHubPages ? '/blog' : '';
+              const targetUrl = `${blogPrefix}/article/${articleId}`;
+              
+              console.log('分类页文章点击:', originalHref, '->', targetUrl);
+              window.location.href = targetUrl;
+            } else {
+              // 回退到默认URL
+              window.location.href = originalHref;
+            }
+          }, { capture: true });
+        });
+        
+        // 2. 修复所有卡片点击
+        const articleCards = document.querySelectorAll('.article-card, [class*="Card"]');
+        articleCards.forEach(card => {
+          card.addEventListener('click', (e) => {
+            // 如果点击的是卡片内的链接，让链接处理程序处理
+            if (e.target.tagName === 'A' || e.target.closest('a')) {
+              return;
+            }
+            
+            // 尝试从卡片找到文章ID
+            let articleId = null;
+            
+            // 方法1：从数据属性
+            if (card.dataset && card.dataset.articleId) {
+              articleId = card.dataset.articleId;
+            } 
+            // 方法2：从内部链接
+            else {
+              const link = card.querySelector('a[href*="/article/"]');
+              if (link) {
+                const href = link.getAttribute('href');
+                const parts = href.split('/article/');
+                if (parts.length > 1) {
+                  articleId = parts[1].split('/')[0];
+                }
+              }
+            }
+            
+            if (articleId) {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              // 导航到文章
+              const isGitHubPages = window.location.hostname.includes('github.io');
+              const blogPrefix = isGitHubPages ? '/blog' : '';
+              window.location.href = `${blogPrefix}/article/${articleId}`;
+            }
+          }, { capture: true });
+        });
+      } catch (err) {
+        console.error('分类页链接修复错误:', err);
+      }
+    };
+    
+    // 执行修复
+    setTimeout(fixCategoryPageLinks, 500);
+    setTimeout(fixCategoryPageLinks, 1500);
+    
+    // 监视DOM变化
+    const observer = new MutationObserver(() => {
+      fixCategoryPageLinks();
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    return () => observer.disconnect();
+  }, []);
+  
   // 渲染背景
   const renderBackground = () => {
     if (theme === '镜像') {

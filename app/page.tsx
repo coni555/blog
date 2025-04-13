@@ -419,6 +419,130 @@ export default function Home() {
     );
   };
 
+  // 添加特殊导航修复
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // 特殊修复函数 - 直接劫持DOM元素上的点击事件
+    const applySpecialLinkFixes = () => {
+      console.log('应用首页特殊链接修复');
+      
+      // 1. 修复最新文章区域
+      const latestArticleLinks = document.querySelectorAll('.latest-articles a, [data-latest-article] a');
+      latestArticleLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          // 阻止默认行为
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // 获取原始href
+          const href = link.getAttribute('href');
+          if (!href) return;
+          
+          // 特殊处理文章链接
+          if (href.includes('/article/')) {
+            const parts = href.split('/article/');
+            if (parts.length > 1) {
+              const articleId = parts[1].split('/')[0];
+              // 有效的文章ID应为数字
+              if (articleId && !isNaN(Number(articleId))) {
+                console.log(`首页文章点击: ${articleId}`);
+                // 使用window.location以确保正确跳转
+                window.location.href = getNavigationUrl(`/article/${articleId}`);
+                return;
+              }
+            }
+          }
+          
+          // 其他链接使用修复后的链接
+          const fixedHref = getNavigationUrl(href);
+          console.log(`首页链接修复: ${href} -> ${fixedHref}`);
+          window.location.href = fixedHref;
+        }, { capture: true });
+      });
+      
+      // 2. 修复分类区域
+      const categoryLinks = document.querySelectorAll('[id^="category-"] a, .category-section a');
+      categoryLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const href = link.getAttribute('href');
+          if (!href) return;
+          
+          window.location.href = getNavigationUrl(href);
+        }, { capture: true });
+      });
+      
+      // 3. 修复所有文章卡片区域
+      const articleCards = document.querySelectorAll('.article-card, [data-article-id]');
+      articleCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+          // 检查是否点击了卡片内部的链接
+          const target = e.target;
+          if (target && (target.tagName === 'A' || target.closest('a'))) {
+            // 链接点击会由上面的处理器处理
+            return;
+          }
+          
+          // 从卡片本身获取文章ID
+          const articleId = card.getAttribute('data-article-id');
+          if (articleId) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log(`文章卡片点击: ${articleId}`);
+            window.location.href = getNavigationUrl(`/article/${articleId}`);
+          }
+        }, { capture: true });
+      });
+    };
+    
+    // 在DOM加载后应用修复
+    setTimeout(applySpecialLinkFixes, 1000);
+    setTimeout(applySpecialLinkFixes, 2000);
+    
+    // 监视DOM变化以应用修复
+    const observer = new MutationObserver((mutations) => {
+      let needsFix = false;
+      
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList' && mutation.addedNodes.length) {
+          for (const node of mutation.addedNodes) {
+            if (node.nodeType === 1) { // 元素节点
+              // 如果添加了新的文章卡片、链接或分类区域
+              if (node.classList && 
+                 (node.classList.contains('article-card') || 
+                  node.classList.contains('latest-articles') || 
+                  node.classList.contains('category-section'))) {
+                needsFix = true;
+                break;
+              }
+              
+              // 或者添加的节点内部包含这些元素
+              if (node.querySelector && 
+                 (node.querySelector('.article-card, .latest-articles, .category-section, a[href]'))) {
+                needsFix = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+      
+      if (needsFix) {
+        applySpecialLinkFixes();
+      }
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
       {renderBackground()}

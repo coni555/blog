@@ -59,6 +59,99 @@ export default function ArticleContent({ id }) {
     }
   }, []);
   
+  // 添加特殊链接修复
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // 修复相关推荐链接问题
+    const fixRelatedLinks = () => {
+      try {
+        // 查找所有相关推荐链接
+        const relatedLinks = document.querySelectorAll('.related-recommendations a, .related-articles a');
+        if (relatedLinks.length > 0) {
+          console.log('找到相关推荐链接:', relatedLinks.length);
+          
+          relatedLinks.forEach(link => {
+            // 获取原始href
+            const originalHref = link.getAttribute('href');
+            if (!originalHref) return;
+            
+            // 检查是否包含文章ID
+            if (originalHref.includes('/article/')) {
+              // 保存原始点击行为
+              const originalOnClick = link.onclick;
+              
+              // 重写点击行为
+              link.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // 提取文章ID
+                const parts = originalHref.split('/article/');
+                if (parts.length > 1) {
+                  const articleId = parts[1].split('/')[0];
+                  
+                  // 构建正确的URL（确保包含 /blog 前缀）
+                  let targetUrl = originalHref;
+                  if (window.location.hostname.includes('github.io')) {
+                    // 如果在 GitHub Pages 上
+                    if (!targetUrl.startsWith('/blog')) {
+                      targetUrl = '/blog' + targetUrl;
+                    }
+                  }
+                  
+                  console.log('相关推荐点击:', originalHref, '->', targetUrl);
+                  window.location.href = targetUrl;
+                  
+                  return false;
+                }
+              };
+            }
+          });
+        }
+      } catch (err) {
+        console.error('修复相关推荐链接错误:', err);
+      }
+    };
+    
+    // 在DOM加载完成后执行修复
+    setTimeout(fixRelatedLinks, 1000);
+    setTimeout(fixRelatedLinks, 2000);
+    
+    // 监视DOM变化
+    const observer = new MutationObserver(mutations => {
+      let hasRelatedContent = false;
+      
+      mutations.forEach(mutation => {
+        if (mutation.type === 'childList' && mutation.addedNodes.length) {
+          // 检查是否添加了相关推荐内容
+          for (let i = 0; i < mutation.addedNodes.length; i++) {
+            const node = mutation.addedNodes[i];
+            if (node.nodeType === 1) { // 元素节点
+              if (node.className && 
+                  (node.className.includes('related') || 
+                   node.querySelector && node.querySelector('.related-recommendations, .related-articles'))) {
+                hasRelatedContent = true;
+                break;
+              }
+            }
+          }
+        }
+      });
+      
+      if (hasRelatedContent) {
+        fixRelatedLinks();
+      }
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    return () => observer.disconnect();
+  }, []);
+  
   // 渲染背景
   const renderBackground = () => {
     if (theme === '镜像') {
