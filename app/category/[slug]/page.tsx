@@ -42,7 +42,7 @@ export function generateStaticParams() {
   }));
 }
 
-// 服务器组件渲染页面框架
-export default function CategoryPage({ params }: { params: { slug: string } }) {
+// 与 ArticlePage 保持一致的简单格式
+export default function CategoryPage({ params }: { params: any }) {
   return <CategoryClientPage slug={params.slug} />;
 } 
