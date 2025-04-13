@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>页面未找到 - 重定向中</title>
+  <script type="text/javascript">
+    // 重定向脚本，将URL中的路径添加到/blog前缀后
+    (function() {
+      var segmentCount = 0;
+      var l = window.location;
+      var repo = "blog"; // 确保与你的仓库名一致
+      l.replace(
+        l.protocol + '//' + l.hostname + 
+        (l.port ? ':' + l.port : '') + 
+        '/' + repo + 
+        l.pathname.split('/').slice(segmentCount).join('/') + 
+        (l.search ? l.search : '') + 
+        (l.hash ? l.hash : '')
+      );
+    })();
+  </script>
+</head>
+<body>
+  <h1>页面重定向中...</h1>
+  <p>如果页面没有自动跳转，请<a id="redirect-link" href="">点击这里</a>。</p>
+  <script>
+    document.getElementById('redirect-link').href = window.location.pathname.replace(/^\//, '/blog/');
+  </script>
+</body>
+</html> 
