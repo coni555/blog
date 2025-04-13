@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import StarBackground from '../components/StarBackground';
@@ -21,7 +21,8 @@ type Article = {
   content?: string;
 };
 
-export default function SearchPage() {
+// 创建一个单独的组件来使用useSearchParams
+function SearchContent() {
   const searchParams = useSearchParams();
   const queryParam = searchParams ? searchParams.get('q') : '';
   const [query, setQuery] = useState('');
@@ -207,5 +208,21 @@ export default function SearchPage() {
         )}
       </div>
     </>
+  );
+}
+
+// 主页面组件使用Suspense包装SearchContent
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent"></div>
+          <p className="mt-4">加载中...</p>
+        </div>
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
   );
 } 
