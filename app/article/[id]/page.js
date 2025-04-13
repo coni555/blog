@@ -1,17 +1,27 @@
+import articlesData from '../../../data/articles.json';
+
+// 为静态导出添加generateStaticParams函数
+export function generateStaticParams() {
+  return articlesData.map((article) => ({
+    id: article.id
+  }));
+}
+
+// 服务器组件渲染页面框架
+export default function ArticlePage({ params }) {
+  return <ArticleContent id={params.id} />;
+}
+
+// 客户端组件处理交互和状态
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import StarBackground from '../../components/StarBackground';
 import DataFlowBackground from '../../components/DataFlowBackground';
 
-// 导入文章数据
-import articlesData from '../../../data/articles.json';
-
-export default function ArticleDetailPage() {
-  const params = useParams();
-  const articleId = params.id;
+function ArticleContent({ id }) {
+  const articleId = id;
   
   const [article, setArticle] = useState(null);
   const [relatedArticles, setRelatedArticles] = useState([]);
@@ -20,32 +30,36 @@ export default function ArticleDetailPage() {
   
   // 加载文章和相关文章
   useEffect(() => {
-    // 查找当前文章
-    const foundArticle = articlesData.find(a => a.id === articleId);
-    setArticle(foundArticle);
-    
-    if (foundArticle) {
-      // 查找相关文章（同类别）
-      const related = articlesData
-        .filter(a => a.id !== articleId && a.category === foundArticle.category);
+    // 导入在客户端动态导入文章数据
+    import('../../../data/articles.json').then((module) => {
+      const articlesData = module.default;
+      // 查找当前文章
+      const foundArticle = articlesData.find(a => a.id === articleId);
+      setArticle(foundArticle);
       
-      // 随机排序文章
-      const shuffledRelated = [...related].sort(() => 0.5 - Math.random());
-      
-      // 如果相关文章不足3篇，再随机补充一些
-      let finalRelated = shuffledRelated.slice(0, 3);
-      
-      if (finalRelated.length < 3) {
-        const otherArticles = articlesData
-          .filter(a => a.id !== articleId && !finalRelated.find(r => r.id === a.id))
-          .sort(() => 0.5 - Math.random())
-          .slice(0, 3 - finalRelated.length);
+      if (foundArticle) {
+        // 查找相关文章（同类别）
+        const related = articlesData
+          .filter(a => a.id !== articleId && a.category === foundArticle.category);
         
-        finalRelated = [...finalRelated, ...otherArticles];
+        // 随机排序文章
+        const shuffledRelated = [...related].sort(() => 0.5 - Math.random());
+        
+        // 如果相关文章不足3篇，再随机补充一些
+        let finalRelated = shuffledRelated.slice(0, 3);
+        
+        if (finalRelated.length < 3) {
+          const otherArticles = articlesData
+            .filter(a => a.id !== articleId && !finalRelated.find(r => r.id === a.id))
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3 - finalRelated.length);
+          
+          finalRelated = [...finalRelated, ...otherArticles];
+        }
+        
+        setRelatedArticles(finalRelated.slice(0, 3));
       }
-      
-      setRelatedArticles(finalRelated.slice(0, 3));
-    }
+    });
   }, [articleId]);
   
   // 加载保存的主题设置

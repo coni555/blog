@@ -1,3 +1,9 @@
+// 服务器组件部分，处理静态生成
+export default function SearchPage() {
+  return <SearchContent />;
+}
+
+// 客户端组件处理交互
 'use client';
 
 import React, { useEffect, useState, Suspense } from 'react';
@@ -6,27 +12,12 @@ import Link from 'next/link';
 import StarBackground from '../components/StarBackground';
 import DataFlowBackground from '../components/DataFlowBackground';
 
-// 导入文章数据
-import articlesData from '../../data/articles.json';
-
-// 定义文章类型
-type Article = {
-  id: string;
-  title: string;
-  date: string;
-  author: string;
-  category: string;
-  url: string;
-  summary?: string;
-  content?: string;
-};
-
 // 创建一个单独的组件来使用useSearchParams
 function SearchContent() {
   const searchParams = useSearchParams();
   const queryParam = searchParams ? searchParams.get('q') : '';
   const [query, setQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Article[]>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [theme, setTheme] = useState<'星空感' | '镜像'>('星空感');
   const [isMounted, setIsMounted] = useState(false);
   
@@ -47,22 +38,28 @@ function SearchContent() {
     }
   }, [queryParam]);
   
-  // 执行搜索
+  // 动态导入文章数据
   useEffect(() => {
-    if (query && isMounted) {
-      const results = performSearch(query);
-      setSearchResults(results);
-    } else {
-      setSearchResults([]);
-    }
+    let articlesData: any[] = [];
+    
+    // 使用动态导入从客户端加载数据
+    import('../../data/articles.json').then((module) => {
+      articlesData = module.default;
+      
+      if (query && isMounted) {
+        const results = performSearch(query, articlesData);
+        setSearchResults(results);
+      } else {
+        setSearchResults([]);
+      }
+    });
   }, [query, isMounted]);
   
   // 搜索逻辑
-  const performSearch = (searchQuery: string) => {
-    const typedArticlesData = articlesData as Article[];
+  const performSearch = (searchQuery: string, articlesData: any[]) => {
     const lowercaseQuery = searchQuery.toLowerCase();
     
-    return typedArticlesData.filter(article => {
+    return articlesData.filter(article => {
       // 在标题、摘要和内容中搜索
       const titleMatch = article.title.toLowerCase().includes(lowercaseQuery);
       const summaryMatch = article.summary ? article.summary.toLowerCase().includes(lowercaseQuery) : false;
@@ -208,21 +205,5 @@ function SearchContent() {
         )}
       </div>
     </>
-  );
-}
-
-// 主页面组件使用Suspense包装SearchContent
-export default function SearchPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent"></div>
-          <p className="mt-4">加载中...</p>
-        </div>
-      </div>
-    }>
-      <SearchContent />
-    </Suspense>
   );
 } 
