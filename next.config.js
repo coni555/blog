@@ -14,7 +14,7 @@ const nextConfig = {
     },
     basePath: `/${repoName}`,
     assetPrefix: `/${repoName}/`,
-    trailingSlash: true,
+    trailingSlash: false,
   } : {})
 };
 

@@ -31,8 +31,12 @@ jobs:
         run: |
           npm run build:github
           touch out/.nojekyll
+          # 复制404页面和CNAME文件到根目录
+          cp 404.html out/404.html
+          cp CNAME out/CNAME
         env:
           DEPLOY_TARGET: github
+          NEXT_PUBLIC_DEPLOY_TARGET: github
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

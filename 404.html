@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>重定向中...</title>
+  <script>
+    sessionStorage.redirect = location.href;
+  </script>
+  <meta http-equiv="refresh" content="0;URL='/blog'">
+</head>
+<body>
+  <h1>页面重定向中...</h1>
+  <p>如果没有自动跳转，请<a href="/blog">点击这里</a>访问主页。</p>
+  <script>
+    (function(){
+      var redirect = sessionStorage.redirect;
+      delete sessionStorage.redirect;
+      if (redirect && redirect != location.href) {
+        var newPath = redirect.replace(location.origin, '');
+        if (!newPath.startsWith('/blog/') && !newPath.startsWith('/blog')) {
+          newPath = '/blog' + newPath;
+        }
+        history.replaceState(null, null, newPath);
+        document.location.replace(newPath);
+      }
+    })();
+  </script>
+</body>
+</html> 
