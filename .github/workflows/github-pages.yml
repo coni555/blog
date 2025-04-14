@@ -11,38 +11,41 @@ permissions:
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout 🛎️
         uses: actions/checkout@v4
       
-      - name: Setup Node
+      - name: Setup Node.js 💽
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
       
-      - name: Install dependencies
+      - name: Install dependencies 📦
         run: npm ci
       
-      - name: Clean build cache
+      - name: Setup Pages 📃
+        id: pages
+        uses: actions/configure-pages@v4
+      
+      - name: Clean build cache 🧹
         run: |
           rm -rf .next
           rm -rf out
-          # 确保环境变量设置对
-          echo "NEXT_PUBLIC_DEPLOY_TARGET=github" >> .env.local
-          echo "NEXT_PUBLIC_REPO_NAME=blog" >> .env.local
       
-      - name: Build with Next.js
+      - name: Build with Next.js 🏗️
         run: |
-          npm run build:github
+          npx next build
           touch out/.nojekyll
-          # 复制404页面和CNAME文件以及修复脚本到输出目录
-          cp 404.html out/404.html || true
-          cp CNAME out/CNAME || true
-          cp public/link-fix.js out/link-fix.js || true
+          cp -r public/* out/
           
           # 创建注入到所有HTML的脚本
           echo '<script>
@@ -50,25 +53,15 @@ jobs:
           if(window.location.hostname.includes("github.io") && !window.location.pathname.startsWith("/blog")) {
             window.location.href = "/blog" + window.location.pathname;
           }
-          
-          // 加载链接修复脚本
-          var script = document.createElement("script");
-          script.src = "/blog/link-fix.js";
-          document.head.appendChild(script);
           </script>' > link-fix-inline.html
           
           # 注入到所有HTML文件中
-          find out -name "*.html" -exec sh -c 'sed -i "s/<head>/<head>$(cat link-fix-inline.html | tr "\n" " ")/" {}' \;
-          
-          # 确保urlHelper.js正确工作的额外JS脚本
-          mkdir -p out/_next/static/chunks
-          echo "window.NEXT_PUBLIC_DEPLOY_TARGET='github';" > out/_next/static/chunks/github-env.js
-          echo "window.NEXT_PUBLIC_REPO_NAME='blog';" >> out/_next/static/chunks/github-env.js
+          find out -name "*.html" -exec sh -c 'sed -i "s|</head>|$(cat link-fix-inline.html | tr "\n" " ")</head>|" {}' \;
         env:
-          DEPLOY_TARGET: github
           NEXT_PUBLIC_DEPLOY_TARGET: github
-      
-      - name: Upload artifact
+          NEXT_PUBLIC_REPO_NAME: blog
+          
+      - name: Upload artifact 📤
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
@@ -80,6 +73,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages 🚀
         id: deployment
         uses: actions/deploy-pages@v4 

@@ -2,29 +2,83 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>页面未找到 - 重定向中</title>
-  <script type="text/javascript">
-    // 重定向脚本，将URL中的路径添加到/blog前缀后
-    (function() {
-      var segmentCount = 0;
-      var l = window.location;
-      var repo = "blog"; // 确保与你的仓库名一致
-      l.replace(
-        l.protocol + '//' + l.hostname + 
-        (l.port ? ':' + l.port : '') + 
-        '/' + repo + 
-        l.pathname.split('/').slice(segmentCount).join('/') + 
-        (l.search ? l.search : '') + 
-        (l.hash ? l.hash : '')
-      );
-    })();
+  <title>页面重定向中...</title>
+  <script>
+    // 保存当前URL到会话存储中
+    sessionStorage.redirect = location.href;
   </script>
+  <meta http-equiv="refresh" content="0;URL='/blog/'">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #4f46e5, #4338ca);
+      color: white;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      margin-bottom: 2rem;
+    }
+    a {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    a:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body>
   <h1>页面重定向中...</h1>
-  <p>如果页面没有自动跳转，请<a id="redirect-link" href="">点击这里</a>。</p>
+  <p>如果没有自动跳转，请点击下方按钮</p>
+  <a href="/blog/">返回首页</a>
   <script>
-    document.getElementById('redirect-link').href = window.location.pathname.replace(/^\//, '/blog/');
+    (function(){
+      // 尝试获取并重置会话存储中的重定向URL
+      var redirect = sessionStorage.redirect;
+      delete sessionStorage.redirect;
+      
+      // 如果有存储的URL且不是当前页面
+      if (redirect && redirect !== location.href) {
+        // 从完整URL中提取路径
+        var url = new URL(redirect);
+        var pathname = url.pathname;
+        
+        // 确保以/blog前缀开始
+        if (!pathname.startsWith('/blog/') && !pathname.startsWith('/blog')) {
+          pathname = '/blog' + pathname;
+        }
+        
+        // 如果有查询参数，添加回来
+        if (url.search) {
+          pathname += url.search;
+        }
+        
+        // 如果有hash值，添加回来
+        if (url.hash) {
+          pathname += url.hash;
+        }
+        
+        // 替换当前历史记录并跳转
+        history.replaceState(null, null, pathname);
+        window.location.replace(pathname);
+      }
+    })();
   </script>
 </body>
 </html> 

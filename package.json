@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build:github": "cross-env DEPLOY_TARGET=github next build",
+    "build:github": "cross-env NODE_ENV=production next build && touch out/.nojekyll",
     "export": "next export",
-    "deploy:github": "npm run build:github && touch out/.nojekyll && gh-pages -d out"
+    "deploy:github": "npm run build:github && gh-pages -d out"
   },
   "dependencies": {
     "framer-motion": "^12.6.5",
