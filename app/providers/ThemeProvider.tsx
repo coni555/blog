@@ -142,6 +142,19 @@ const ClientThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // 监听脚本加载完成事件
       script.onload = () => {
         console.log('✅ 链接修复脚本已加载');
+        
+        // 加载搜索修复脚本
+        if (isGitHubPages) {
+          const searchFixScript = document.createElement('script');
+          searchFixScript.id = 'search-fix-script';
+          searchFixScript.src = `/blog/search-fix.js?v=${timestamp}`;
+          searchFixScript.async = true;
+          document.body.appendChild(searchFixScript);
+          
+          searchFixScript.onload = () => {
+            console.log('✅ 搜索修复脚本已加载');
+          };
+        }
       };
       
       script.onerror = (err) => {
