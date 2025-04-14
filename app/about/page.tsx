@@ -144,8 +144,21 @@ const StarryBackground = () => {
 };
 
 export default function AboutPage() {
-  const [avatarSrc, setAvatarSrc] = useState('/moon-avatar.svg');
+  const [avatarSrc, setAvatarSrc] = useState('/anime-space-avatar.svg');
+  const [isMounted, setIsMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Load saved avatar on component mount
+  useEffect(() => {
+    setIsMounted(true);
+    // Get saved avatar from localStorage if it exists
+    if (typeof window !== 'undefined') {
+      const savedAvatar = localStorage.getItem('userAvatar');
+      if (savedAvatar) {
+        setAvatarSrc(savedAvatar);
+      }
+    }
+  }, []);
   
   // 处理头像上传
   const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,11 +168,26 @@ export default function AboutPage() {
       const objectUrl = URL.createObjectURL(file);
       setAvatarSrc(objectUrl);
       
+      // Convert to base64 for localStorage persistence
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // This runs once the reader has completed reading the file
+        const base64String = reader.result as string;
+        if (base64String) {
+          // Save base64 string to localStorage
+          localStorage.setItem('userAvatar', base64String);
+          
+          // Update avatar with base64 data
+          setAvatarSrc(base64String);
+          
+          // Revoke the temporary object URL to free up memory
+          URL.revokeObjectURL(objectUrl);
+        }
+      };
+      reader.readAsDataURL(file);
+      
       // 实际项目中，这里应该调用一个API上传图片到服务器
       console.log('上传了新头像:', file.name);
-      
-      // 在实际应用中，我们需要清理临时URL
-      // 但在这个演示中，我们保留它以便展示上传的图片
     }
   };
   
