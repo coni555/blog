@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -144,6 +144,30 @@ const StarryBackground = () => {
 };
 
 export default function AboutPage() {
+  const [avatarSrc, setAvatarSrc] = useState('/moon-avatar.svg');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // 处理头像上传
+  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // 创建一个临时URL来预览上传的图片
+      const objectUrl = URL.createObjectURL(file);
+      setAvatarSrc(objectUrl);
+      
+      // 实际项目中，这里应该调用一个API上传图片到服务器
+      console.log('上传了新头像:', file.name);
+      
+      // 在实际应用中，我们需要清理临时URL
+      // 但在这个演示中，我们保留它以便展示上传的图片
+    }
+  };
+  
+  // 触发文件选择对话框
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 via-indigo-900 to-blue-900 py-16 relative overflow-hidden">
       <StarryBackground />
@@ -264,12 +288,34 @@ export default function AboutPage() {
                   {/* 动漫角色图片 */}
                   <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent to-purple-900/30">
                     <div className="anime-character w-full h-full flex items-center justify-center">
-                      {/* 使用Base64编码的图片作为替代 */}
-                      <div className="w-full h-full relative overflow-hidden">
+                      {/* 图片区域 */}
+                      <div className="w-full h-full relative overflow-hidden group">
                         <img 
-                          src="/moon-avatar.svg" 
+                          src={avatarSrc}
                           alt="小夜头像"
                           className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        
+                        {/* 上传按钮悬浮层 */}
+                        <div 
+                          className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 cursor-pointer"
+                          onClick={triggerFileInput}
+                        >
+                          <div className="text-white text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p>点击上传头像</p>
+                          </div>
+                        </div>
+                        
+                        {/* 隐藏的文件输入 */}
+                        <input 
+                          ref={fileInputRef}
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={handleAvatarUpload}
                         />
                       </div>
                       <style jsx>{`
@@ -302,14 +348,8 @@ export default function AboutPage() {
               <div className="mt-6 text-center">
                 <h3 className="text-xl font-bold text-white">小夜</h3>
                 <p className="text-gray-300 mb-2">AI Creative Studio</p>
-                <div className="flex flex-col gap-1">
-                  <p className="text-xs text-blue-300 bg-blue-900/50 inline-block px-3 py-1 rounded-full border border-blue-500/30">
-                    温馨提示：小夜是男生哦，请不要误认为是女生啦～
-                  </p>
-                  <div className="mt-1 flex justify-center gap-1">
-                    <span className="text-xs text-blue-300 bg-blue-900/50 px-2 py-0.5 rounded-full">♂️</span>
-                    <span className="text-xs text-blue-300">男生</span>
-                  </div>
+                <div className="flex justify-center gap-2">
+                  <span className="text-xs text-blue-300 bg-blue-900/50 px-2 py-0.5 rounded-full">♂️ 男生</span>
                 </div>
               </div>
             </div>
