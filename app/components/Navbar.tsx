@@ -114,7 +114,23 @@ const Navbar = () => {
 
           {/* 搜索框 */}
           <div className="relative">
-            <form action="/search" className="m-0 p-0">
+            <form 
+              action={getLinkHref("/search")} 
+              className="m-0 p-0"
+              onSubmit={(e) => {
+                // 在GitHub Pages环境中使用客户端导航
+                if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  const searchQuery = formData.get('q') as string;
+                  if (searchQuery) {
+                    const searchUrl = getLinkHref(`/search?q=${encodeURIComponent(searchQuery)}`);
+                    console.log('搜索重定向到:', searchUrl);
+                    window.location.href = searchUrl;
+                  }
+                }
+              }}
+            >
               <input
                 type="text"
                 name="q"
@@ -189,7 +205,24 @@ const Navbar = () => {
               首页
             </Link>
             
-            <form action="/search" className="mb-0 flex">
+            <form 
+              action={getLinkHref("/search")} 
+              className="mb-0 flex"
+              onSubmit={(e) => {
+                // 在GitHub Pages环境中使用客户端导航
+                if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  const searchQuery = formData.get('q') as string;
+                  if (searchQuery) {
+                    const searchUrl = getLinkHref(`/search?q=${encodeURIComponent(searchQuery)}`);
+                    console.log('搜索重定向到:', searchUrl);
+                    window.location.href = searchUrl;
+                    setIsMobileMenuOpen(false);
+                  }
+                }
+              }}
+            >
               <input
                 type="text"
                 name="q"

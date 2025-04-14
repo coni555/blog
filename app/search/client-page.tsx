@@ -18,9 +18,36 @@ export default function ClientSearchPage() {
   useEffect(() => {
     setIsMounted(true);
     
-    // Update the query state after client-side hydration
-    if (queryParam) {
-      setQuery(queryParam);
+    // 更强健的查询参数处理
+    if (typeof window !== 'undefined') {
+      // 1. 首先尝试从useSearchParams获取
+      let queryValue = queryParam || '';
+      
+      // 2. 如果为空，尝试直接从URL获取（处理GitHub Pages上的特殊情况）
+      if (!queryValue) {
+        const urlParams = new URLSearchParams(window.location.search);
+        queryValue = urlParams.get('q') || '';
+        
+        // 3. 如果仍为空且在GitHub Pages上，尝试解析路径部分
+        if (!queryValue && window.location.hostname.includes('github.io')) {
+          // 例如 /blog/search?q=test 或 /blog/search/q=test
+          const pathSegments = window.location.pathname.split('/');
+          const searchSegmentIndex = pathSegments.indexOf('search');
+          
+          if (searchSegmentIndex >= 0 && searchSegmentIndex < pathSegments.length - 1) {
+            const possibleQuery = pathSegments[searchSegmentIndex + 1];
+            if (possibleQuery && possibleQuery.includes('=')) {
+              const [param, value] = possibleQuery.split('=');
+              if (param === 'q') {
+                queryValue = value;
+              }
+            }
+          }
+        }
+      }
+      
+      console.log('搜索查询参数:', queryValue);
+      setQuery(queryValue);
     }
     
     // 从localStorage读取主题设置
@@ -109,7 +136,23 @@ export default function ClientSearchPage() {
         </header>
         
         {/* 搜索表单 */}
-        <form className="mb-12 flex justify-center" action="/search">
+        <form 
+          className="mb-12 flex justify-center" 
+          action={getLinkHref("/search")}
+          onSubmit={(e) => {
+            // 在GitHub Pages环境中使用客户端导航
+            if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const searchQuery = formData.get('q') as string;
+              if (searchQuery) {
+                const searchUrl = getLinkHref(`/search?q=${encodeURIComponent(searchQuery)}`);
+                console.log('搜索重定向到:', searchUrl);
+                window.location.href = searchUrl;
+              }
+            }
+          }}
+        >
           <div className="relative w-full max-w-xl">
             <input
               type="text"
