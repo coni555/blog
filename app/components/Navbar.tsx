@@ -65,7 +65,7 @@ const Navbar = () => {
         <Link href="/" className="flex items-center space-x-2 group">
           <span className="text-2xl inline-block transition-transform group-hover:rotate-12">🌙</span>
           <span className="font-bold text-lg text-white group-hover:text-indigo-300 transition-colors">
-            小夜 AI 创作馆
+            幻语 AI 创作馆
           </span>
         </Link>
 

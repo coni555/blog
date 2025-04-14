@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "小夜 AI 创作馆",
+  title: "幻语 AI 创作馆",
   description: "AI 写作与创作的个人博客",
 };
 

@@ -266,11 +266,11 @@ export default function Home() {
   const getThemeText = () => {
     switch (theme) {
       case '星空感':
-        return "小夜的灵感宇宙正在加载...";
+        return "幻语的灵感宇宙正在加载...";
       case '镜像':
         return "折射镜像幻境初始化...";
       default:
-        return "欢迎来到小夜的创作空间";
+        return "欢迎来到幻语的创作空间";
     }
   };
   
@@ -543,6 +543,22 @@ export default function Home() {
     
     return () => observer.disconnect();
   }, []);
+
+  // 加载状态显示的文本
+  const getLoadingText = () => {
+    if (theme === '镜像') {
+      return "数据流加载中...";
+    }
+    return "幻语的灵感宇宙正在加载...";
+  };
+  
+  // 页面主标题
+  const getMainTitle = () => {
+    if (theme === '镜像') {
+      return "探索AI的无限可能";
+    }
+    return "欢迎来到幻语的创作空间";
+  };
 
   return (
     <>

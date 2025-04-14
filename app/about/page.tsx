@@ -203,7 +203,7 @@ export default function AboutPage() {
                   Hello! 👋
                 </h2>
                 <p className="text-lg text-gray-200 leading-relaxed">
-                  你好呀，我是小夜，一名在AI浪潮中记录灵感、追问世界、探索自我的创作者。
+                  你好呀，我是幻语，一名在AI浪潮中记录灵感、追问世界、探索自我的创作者。
                 </p>
               </div>
               
@@ -292,7 +292,7 @@ export default function AboutPage() {
                       <div className="w-full h-full relative overflow-hidden group">
                         <img 
                           src={avatarSrc}
-                          alt="小夜头像"
+                          alt="幻语头像"
                           className="absolute inset-0 w-full h-full object-cover"
                         />
                         
@@ -346,7 +346,7 @@ export default function AboutPage() {
               </div>
               
               <div className="mt-6 text-center">
-                <h3 className="text-xl font-bold text-white">小夜</h3>
+                <h3 className="text-xl font-bold text-white">幻语</h3>
                 <p className="text-gray-300 mb-2">AI Creative Studio</p>
                 <div className="flex justify-center gap-2">
                   <span className="text-xs text-blue-300 bg-blue-900/50 px-2 py-0.5 rounded-full">♂️ 男生</span>
