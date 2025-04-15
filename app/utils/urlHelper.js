@@ -41,8 +41,28 @@ export function getCorrectPath(path) {
                                 'special', 'multimodal', 'science', 'self-improvement', 
                                 'exercise', 'ai-persona'];
         
+        console.log('URL validation:', { 
+          inputPath, 
+          slug, 
+          isValid: validCategories.includes(slug),
+          validCategories 
+        });
+        
         // 如果是有效分类，保持原路径，否则重定向到首页
         if (validCategories.includes(slug)) {
+          return inputPath;
+        }
+        
+        // 无效分类情况下，记录详细信息
+        console.error('Invalid category detected:', { 
+          slug, 
+          inputPath, 
+          validCategories 
+        });
+        
+        // 对于自我提升特殊处理
+        if (slug === 'self-improvement') {
+          console.log('Special handling for self-improvement');
           return inputPath;
         }
       }

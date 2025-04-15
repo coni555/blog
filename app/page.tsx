@@ -733,12 +733,25 @@ export default function Home() {
               <div className="mb-16">
                 <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-2">
                   <h2 className="text-2xl font-semibold text-white">{activeCategory} · 精选文章</h2>
-                  <Link 
-                    href={getLinkHref(`/category/${getSlugFromCategoryName(activeCategory)}`)}
-                    className="text-indigo-300 hover:text-indigo-200 transition-colors text-sm"
-                  >
-                    查看全部 &rarr;
-                  </Link>
+                  {(() => {
+                    const slug = getSlugFromCategoryName(activeCategory);
+                    const path = `/category/${slug}`;
+                    const fullPath = getLinkHref(path);
+                    console.log('Category URL debug:', {
+                      activeCategory,
+                      slug,
+                      path,
+                      fullPath
+                    });
+                    return (
+                      <Link 
+                        href={fullPath}
+                        className="text-indigo-300 hover:text-indigo-200 transition-colors text-sm"
+                      >
+                        查看全部 &rarr;
+                      </Link>
+                    );
+                  })()}
                 </div>
                 
                 {groupedArticles[activeCategory].length > 2 ? (
