@@ -36,6 +36,12 @@ export function getCorrectPath(path) {
       const parts = inputPath.split('/category/');
       if (parts.length > 1) {
         const slug = parts[1].split('/')[0];
+        
+        // 临时修复：允许所有分类通过
+        console.log('允许所有分类通过：', slug);
+        return inputPath;
+        
+        /* 注释掉先前的验证逻辑
         // 确保是有效的分类
         const validCategories = ['thinking', 'writing', 'reading', 'question', 'english', 
                                 'special', 'multimodal', 'science', 'self-improvement', 
@@ -65,6 +71,7 @@ export function getCorrectPath(path) {
           console.log('Special handling for self-improvement');
           return inputPath;
         }
+        */
       }
     }
     
