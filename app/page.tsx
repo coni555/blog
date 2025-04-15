@@ -560,6 +560,10 @@ export default function Home() {
   return (
     <>
       {renderBackground()}
+      {/* 测试更新标记 */}
+      <div className="fixed top-0 left-0 right-0 bg-red-600 text-white py-1 z-50 text-center">
+        测试更新: 自我提升分类修复测试 - <a href="/blog/category/self-improvement" className="text-yellow-300 underline">直接链接到自我提升</a>
+      </div>
       <main className="min-h-screen p-8 max-w-5xl mx-auto relative z-10">
         {/* 主题选择器 */}
         {isMounted && (
@@ -734,6 +738,22 @@ export default function Home() {
                 <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-2">
                   <h2 className="text-2xl font-semibold text-white">{activeCategory} · 精选文章</h2>
                   {(() => {
+                    // 针对"自我提升"类别使用硬编码链接
+                    if (activeCategory === '自我提升') {
+                      console.log('使用硬编码的自我提升链接');
+                      return (
+                        <Link 
+                          href={typeof window !== 'undefined' && window.location.hostname.includes('github.io') 
+                            ? '/blog/category/self-improvement' 
+                            : '/category/self-improvement'}
+                          className="text-indigo-300 hover:text-indigo-200 transition-colors text-sm"
+                        >
+                          查看全部 &rarr;
+                        </Link>
+                      );
+                    }
+                    
+                    // 其他类别
                     const slug = getSlugFromCategoryName(activeCategory);
                     const path = `/category/${slug}`;
                     const fullPath = getLinkHref(path);
