@@ -19,12 +19,9 @@ const getCategoryDisplayName = (slug) => {
     'special': '彩蛋文',
     'multimodal': '多模态创作',
     'science': '科普',
-    'planning': '高效计划',
-    'ai-sop': 'AI协作SOP',
-    'thinking': '个体思考',
-    'personalization': '个性化打造',
+    'self-improvement': '自我提升',
+    'thinking': '思维培养',
     'exercise': '运动',
-    'ai-happiness': 'AI小确幸',
     'ai-persona': 'AI人格模拟',
   };
   
@@ -41,12 +38,9 @@ const getSlugFromCategoryName = (categoryName) => {
     '彩蛋文': 'special',
     '多模态创作': 'multimodal',
     '科普': 'science',
-    '高效计划': 'planning',
-    'AI协作SOP': 'ai-sop',
-    '个体思考': 'thinking',
-    '个性化打造': 'personalization',
+    '自我提升': 'self-improvement',
+    '思维培养': 'thinking',
     '运动': 'exercise',
-    'AI小确幸': 'ai-happiness',
     'AI人格模拟': 'ai-persona',
   };
   

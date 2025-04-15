@@ -11,12 +11,9 @@ const getSlugFromCategoryName = (categoryName) => {
     '彩蛋文': 'special',
     '多模态创作': 'multimodal',
     '科普': 'science',
-    '高效计划': 'planning',
-    'AI协作SOP': 'ai-sop',
-    '个体思考': 'thinking',
-    '个性化打造': 'personalization',
+    '自我提升': 'self-improvement',
+    '思维培养': 'thinking',
     '运动': 'exercise',
-    'AI小确幸': 'ai-happiness',
     'AI人格模拟': 'ai-persona',
   };
   
