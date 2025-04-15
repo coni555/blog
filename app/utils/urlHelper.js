@@ -38,8 +38,8 @@ export function getCorrectPath(path) {
         const slug = parts[1].split('/')[0];
         // 确保是有效的分类
         const validCategories = ['thinking', 'writing', 'reading', 'question', 'english', 
-                                'special', 'multimodal', 'science', 'planning', 'ai-sop', 
-                                'personalization', 'exercise', 'ai-happiness', 'ai-persona'];
+                                'special', 'multimodal', 'science', 'self-improvement', 
+                                'exercise', 'ai-persona'];
         
         // 如果是有效分类，保持原路径，否则重定向到首页
         if (validCategories.includes(slug)) {
