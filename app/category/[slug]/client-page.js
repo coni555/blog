@@ -79,9 +79,26 @@ export default function CategoryClientPage({ slug }) {
         const categoryDisplayName = getCategoryDisplayName(categorySlug);
         const articles = articlesData.filter(
           article => {
-            // 使用显示名称和slug都进行匹配
-            return article.category.trim() === categoryDisplayName || 
+            // 基本匹配：分类名或slug直接匹配
+            const basicMatch = article.category.trim() === categoryDisplayName || 
                   getSlugFromCategoryName(article.category.trim()) === categorySlug;
+            
+            // 自我提升的特殊处理（合并了高效计划、AI协作SOP、个性化打造、AI小确幸）
+            const isSelfImprovement = categorySlug === 'self-improvement';
+            const mergedCategories = ['高效计划', 'AI协作SOP', '个性化打造', 'AI小确幸'];
+            const isInMergedCategory = isSelfImprovement && mergedCategories.includes(article.category.trim());
+            
+            // 记录详细匹配信息
+            console.log(`文章：${article.title}`, {
+              分类: article.category.trim(),
+              展示分类名: categoryDisplayName,
+              slug: categorySlug,
+              基本匹配: basicMatch,
+              合并分类匹配: isInMergedCategory,
+              最终结果: basicMatch || isInMergedCategory
+            });
+            
+            return basicMatch || isInMergedCategory;
           }
         );
         

@@ -34,7 +34,16 @@ const getUniqueCategories = () => {
 // 为静态导出添加generateStaticParams函数
 export function generateStaticParams() {
   // 获取所有分类的 slug
-  return getUniqueCategories().map((slug) => ({
+  const categorySlugs = getUniqueCategories();
+  
+  // 确保一定包含自我提升分类
+  if (!categorySlugs.includes('self-improvement')) {
+    categorySlugs.push('self-improvement');
+  }
+  
+  console.log('静态生成的分类页面:', categorySlugs);
+  
+  return categorySlugs.map((slug) => ({
     slug
   }));
 }
