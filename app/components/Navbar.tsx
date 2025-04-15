@@ -100,7 +100,29 @@ const Navbar = () => {
                     key={category.name}
                     href={getLinkHref(category.href)}
                     className="block px-4 py-2 text-sm text-gray-100 hover:bg-gray-700/80 hover:text-indigo-300"
-                    onClick={() => setIsDropdownOpen(false)}
+                    onClick={(e) => {
+                      // 先关闭下拉菜单
+                      setIsDropdownOpen(false);
+                      
+                      // GitHub Pages环境下的特殊处理
+                      if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+                        e.preventDefault();
+                        
+                        // 确保自我提升分类的导航正确
+                        const targetPath = category.href;
+                        const fullUrl = getLinkHref(targetPath);
+                        
+                        // 记录详细导航信息，便于调试
+                        console.log(`导航到分类: ${category.name}`, {
+                          原始路径: targetPath,
+                          完整URL: fullUrl,
+                          当前主机: window.location.hostname
+                        });
+                        
+                        // 使用直接导航以确保正确路由
+                        window.location.href = fullUrl;
+                      }
+                    }}
                   >
                     {category.name}
                   </Link>
@@ -259,9 +281,29 @@ const Navbar = () => {
                       key={category.name}
                       href={getLinkHref(category.href)}
                       className="block py-1.5 text-sm text-gray-100 hover:text-indigo-300"
-                      onClick={() => {
+                      onClick={(e) => {
+                        // 先关闭所有菜单
                         setIsDropdownOpen(false);
                         setIsMobileMenuOpen(false);
+                        
+                        // GitHub Pages环境下的特殊处理
+                        if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+                          e.preventDefault();
+                          
+                          // 确保自我提升分类的导航正确
+                          const targetPath = category.href;
+                          const fullUrl = getLinkHref(targetPath);
+                          
+                          // 记录详细导航信息，便于调试
+                          console.log(`移动端导航到分类: ${category.name}`, {
+                            原始路径: targetPath,
+                            完整URL: fullUrl,
+                            当前主机: window.location.hostname
+                          });
+                          
+                          // 使用直接导航以确保正确路由
+                          window.location.href = fullUrl;
+                        }
                       }}
                     >
                       {category.name}
