@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自我提升分类测试</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #f9f9fb;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        .link-container {
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+        a {
+            display: block;
+            margin: 1rem 0;
+            color: #4263eb;
+            text-decoration: none;
+            padding: 0.75rem;
+            border-radius: 4px;
+            background: #f8f9ff;
+            border: 1px solid #e4e9ff;
+        }
+        a:hover {
+            background: #e7ebff;
+        }
+        .explanation {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>自我提升分类测试页面</h1>
+    <p>此页面包含多种方式链接到自我提升分类，帮助排查问题。</p>
+    
+    <div class="link-container">
+        <h2>相对路径链接</h2>
+        <a href="category/self-improvement">相对路径: category/self-improvement</a>
+        <div class="explanation">使用相对路径链接到自我提升分类页面</div>
+        
+        <a href="/category/self-improvement">根路径: /category/self-improvement</a>
+        <div class="explanation">使用从网站根目录开始的路径</div>
+    </div>
+    
+    <div class="link-container">
+        <h2>GitHub Pages特定链接</h2>
+        <a href="/blog/category/self-improvement">GitHub Pages路径: /blog/category/self-improvement</a>
+        <div class="explanation">包含GitHub Pages的/blog前缀</div>
+    </div>
+    
+    <div class="link-container">
+        <h2>其他测试链接</h2>
+        <a href="/blog/debug-category">访问调试页面</a>
+        <div class="explanation">查看所有分类的详细信息和测试链接</div>
+        
+        <a href="/blog">返回首页</a>
+        <div class="explanation">返回网站首页</div>
+    </div>
+</body>
+</html> 
