@@ -36,42 +36,18 @@ export function getCorrectPath(path) {
       const parts = inputPath.split('/category/');
       if (parts.length > 1) {
         const slug = parts[1].split('/')[0];
-        
-        // 临时修复：允许所有分类通过
-        console.log('允许所有分类通过：', slug);
-        return inputPath;
-        
-        /* 注释掉先前的验证逻辑
         // 确保是有效的分类
         const validCategories = ['thinking', 'writing', 'reading', 'question', 'english', 
                                 'special', 'multimodal', 'science', 'self-improvement', 
                                 'exercise', 'ai-persona'];
-        
-        console.log('URL validation:', { 
-          inputPath, 
-          slug, 
-          isValid: validCategories.includes(slug),
-          validCategories 
-        });
         
         // 如果是有效分类，保持原路径，否则重定向到首页
         if (validCategories.includes(slug)) {
           return inputPath;
         }
         
-        // 无效分类情况下，记录详细信息
-        console.error('Invalid category detected:', { 
-          slug, 
-          inputPath, 
-          validCategories 
-        });
-        
-        // 对于自我提升特殊处理
-        if (slug === 'self-improvement') {
-          console.log('Special handling for self-improvement');
-          return inputPath;
-        }
-        */
+        // 无法识别的分类也保留原路径
+        return inputPath;
       }
     }
     
