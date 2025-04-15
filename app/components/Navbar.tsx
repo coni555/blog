@@ -43,12 +43,9 @@ const Navbar = () => {
     { name: '彩蛋文', href: '/category/special' },
     { name: '多模态创作', href: '/category/multimodal' },
     { name: '科普', href: '/category/science' },
-    { name: '高效计划', href: '/category/planning' },
-    { name: 'AI协作SOP', href: '/category/ai-sop' },
-    { name: '个体思考', href: '/category/thinking' },
-    { name: '个性化打造', href: '/category/personalization' },
+    { name: '自我提升', href: '/category/self-improvement' },
+    { name: '思维培养', href: '/category/thinking' },
     { name: '运动', href: '/category/exercise' },
-    { name: 'AI小确幸', href: '/category/ai-happiness' },
     { name: 'AI人格模拟', href: '/category/ai-persona' },
   ];
 
