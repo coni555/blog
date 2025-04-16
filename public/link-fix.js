@@ -13,7 +13,8 @@
   const workingCategories = [
     'thinking', 'writing', 'reading', 'question', 'english', 
     'special', 'multimodal', 'science', 'planning', 'ai-sop', 
-    'personalization', 'exercise', 'ai-happiness', 'ai-persona'
+    'personalization', 'exercise', 'ai-happiness', 'ai-persona',
+    'self-improvement'
   ];
   
   // 静态页面列表

@@ -12,7 +12,7 @@ export default function LinkGuard() {
   
   useEffect(() => {
     // 已处理分类（可以正常工作的）
-    const WORKING_CATEGORIES = ['thinking', 'writing', 'reading', 'question', 'english'];
+    const WORKING_CATEGORIES = ['thinking', 'writing', 'reading', 'question', 'english', 'special', 'multimodal', 'science', 'self-improvement', 'exercise', 'ai-persona'];
     
     // 检测是否在GitHub Pages环境
     const isGitHubPages = window.location.hostname.includes('github.io');
