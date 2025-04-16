@@ -11,6 +11,7 @@ import GlassCard from './components/GlassCard';
 import Carousel3D from './components/Carousel3D';
 import SimpleCard from './components/SimpleCard';
 import DataFlowBackground from './components/DataFlowBackground';
+import CategoryFeatureCard from './components/CategoryFeatureCard';
 import { getLinkHref, getNavigationUrl } from './utils/urlHelper';
 
 // 定义文章类型（与详情页一致）
@@ -368,50 +369,17 @@ export default function Home() {
   // 渲染分类卡片
   const renderCategoryCards = () => {
     return (
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 mb-12">
-        {categories.map((category, categoryIndex) => {
-          const categoryGradient = generateGradient(categoryIndex, categories.length);
-          
-          if (theme === '镜像' && isMounted) {
-            return (
-              <GlassCard
-                key={category}
-                className="cursor-pointer"
-                intensity={1.1}
-                onClick={() => handleCategoryClick(category)}
-              >
-                <h2 className="text-2xl font-semibold mb-2 text-white flex items-center">
-                  <span className={`w-2 h-2 rounded-full inline-block mr-2 ${activeCategory === category ? 'bg-cyan-400' : 'bg-cyan-300/50'}`}></span>
-                  {category}
-                  <span className="text-sm ml-2 text-indigo-200">({groupedArticles[category].length}篇)</span>
-                </h2>
-                <p className="text-sm text-indigo-100/80">
-                  点击查看该分类的所有文章
-                </p>
-              </GlassCard>
-            );
-          }
-          
-          return (
-            <SimpleCard
-              key={category}
-              gradientFrom={categoryGradient.from}
-              gradientTo={categoryGradient.to}
-              hoverScale={1.02}
-              className="cursor-pointer"
-              onClick={() => handleCategoryClick(category)}
-            >
-              <h2 className="text-2xl font-semibold mb-2 text-white flex items-center">
-                <span className={`w-2 h-2 rounded-full inline-block mr-2 ${activeCategory === category ? 'bg-indigo-400' : 'bg-indigo-300/50'}`}></span>
-                {category}
-                <span className="text-sm ml-2 text-indigo-200">({groupedArticles[category].length}篇)</span>
-              </h2>
-              <p className="text-sm text-indigo-100/80">
-                点击查看该分类的所有文章
-              </p>
-            </SimpleCard>
-          );
-        })}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
+        {categories.map((category, categoryIndex) => (
+          <CategoryFeatureCard
+            key={category}
+            category={category}
+            articleCount={groupedArticles[category].length}
+            isActive={activeCategory === category}
+            index={categoryIndex}
+            onClick={() => handleCategoryClick(category)}
+          />
+        ))}
       </div>
     );
   };
@@ -680,52 +648,11 @@ export default function Home() {
 
         {/* 分类卡片区域 */}
         <div ref={categoriesRef} className={`transition-opacity duration-500 ${isMounted && typingDone ? 'opacity-100' : 'opacity-0'}`}>
-          <h2 className="text-2xl font-semibold text-white mb-6">文章分类</h2>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 mb-16">
-            {categories.map((category, categoryIndex) => {
-              const categoryGradient = generateGradient(categoryIndex, categories.length);
-              
-              if (theme === '镜像' && isMounted) {
-                return (
-                  <GlassCard
-                    key={category}
-                    className="cursor-pointer"
-                    intensity={1.1}
-                    onClick={() => handleCategoryClick(category)}
-                  >
-                    <h2 className="text-2xl font-semibold mb-2 text-white flex items-center">
-                      <span className={`w-2 h-2 rounded-full inline-block mr-2 ${activeCategory === category ? 'bg-cyan-400' : 'bg-cyan-300/50'}`}></span>
-                      {category}
-                      <span className="text-sm ml-2 text-indigo-200">({groupedArticles[category].length}篇)</span>
-                    </h2>
-                    <p className="text-sm text-indigo-100/80">
-                      点击查看该分类的所有文章
-                    </p>
-                  </GlassCard>
-                );
-              }
-              
-              return (
-                <SimpleCard
-                  key={category}
-                  gradientFrom={categoryGradient.from}
-                  gradientTo={categoryGradient.to}
-                  hoverScale={1.02}
-                  className="cursor-pointer"
-                  onClick={() => handleCategoryClick(category)}
-                >
-                  <h2 className="text-2xl font-semibold mb-2 text-white flex items-center">
-                    <span className={`w-2 h-2 rounded-full inline-block mr-2 ${activeCategory === category ? 'bg-indigo-400' : 'bg-indigo-300/50'}`}></span>
-                    {category}
-                    <span className="text-sm ml-2 text-indigo-200">({groupedArticles[category].length}篇)</span>
-                  </h2>
-                  <p className="text-sm text-indigo-100/80">
-                    点击查看该分类的所有文章
-                  </p>
-                </SimpleCard>
-              );
-            })}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-semibold text-white">文章分类</h2>
+            <div className="text-sm text-indigo-300">共 {categories.length} 个分类</div>
           </div>
+          {renderCategoryCards()}
           
           {/* 活跃分类的文章轮播 */}
           <div id="category-content" ref={categoryContentRef} className="scroll-mt-28">
