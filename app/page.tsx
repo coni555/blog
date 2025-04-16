@@ -284,13 +284,13 @@ export default function Home() {
     
     const articleContent = (
       <>
-        <h3 className={`text-xl font-medium mb-2 text-white ${isCarousel ? 'line-clamp-2' : ''}`}>{article.title}</h3>
+        <h3 className={`text-xl font-medium mb-3 text-white leading-relaxed ${isCarousel ? 'line-clamp-2' : ''}`}>{article.title}</h3>
         {article.summary && (
-          <p className={`text-indigo-100 mb-3 opacity-90 ${isCarousel ? 'line-clamp-2 text-sm' : 'line-clamp-2'}`}>
+          <p className={`text-indigo-100 mb-4 opacity-90 leading-relaxed ${isCarousel ? 'line-clamp-2 text-sm' : 'line-clamp-2'}`}>
             {article.summary}
           </p>
         )}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-2">
           <span className="text-sm text-indigo-200">{article.date}</span>
           {!isCarousel && (
             <Link 

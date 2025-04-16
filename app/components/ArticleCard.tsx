@@ -87,7 +87,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       </div>
       
       <h3 
-        className={`text-lg font-semibold mb-3 text-white transition-all duration-300 ${isHovered ? 'transform translate-x-1 text-indigo-200' : ''}`}
+        className={`text-lg font-semibold mb-3 text-white leading-relaxed transition-all duration-300 ${isHovered ? 'transform translate-x-1 text-indigo-200' : ''}`}
         style={{
           textShadow: isHovered ? '0 0 15px rgba(99,102,241,0.5)' : 'none'
         }}
@@ -96,12 +96,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       </h3>
       
       {summary && (
-        <p className={`text-gray-300 text-sm mb-4 line-clamp-2 transition-all duration-300 ${isHovered ? 'text-gray-200' : ''}`}>
+        <p className={`text-gray-300 text-sm mb-4 line-clamp-2 leading-relaxed transition-all duration-300 ${isHovered ? 'text-gray-200' : ''}`}>
           {summary}
         </p>
       )}
       
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-1">
         <Link 
           href={getLinkHref(`/article/${id}`)}
           className={`text-indigo-300 text-sm hover:text-indigo-200 transition-all duration-300 

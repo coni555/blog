@@ -278,9 +278,9 @@ export default function CategoryClientPage({ slug }) {
               const gradientColors = generateGradient(index);
               const articleContent = (
                 <>
-                  <h3 className="text-xl font-medium mb-2 text-white">{article.title}</h3>
-                  {article.summary && <p className="text-indigo-100 mb-3 opacity-90 line-clamp-3">{article.summary}</p>}
-                  <div className="flex justify-between items-center">
+                  <h3 className="text-xl font-medium mb-3 text-white leading-relaxed">{article.title}</h3>
+                  {article.summary && <p className="text-indigo-100 mb-4 opacity-90 line-clamp-3 leading-relaxed">{article.summary}</p>}
+                  <div className="flex justify-between items-center mt-1">
                     <span className="text-sm text-indigo-200">{article.date}</span>
                     <Link href={getLinkHref(`/article/${article.id}`)} className="text-blue-300 hover:text-blue-200 hover:underline transition-colors">
                       阅读全文 &rarr;
