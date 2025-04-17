@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 const StarBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     setIsMounted(true);
@@ -41,11 +39,11 @@ const StarBackground: React.FC = () => {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
         this.size = Math.random() * 2 + 0.5;
-        this.speedX = prefersReducedMotion ? 0 : Math.random() * 0.1 - 0.05;
-        this.speedY = prefersReducedMotion ? 0 : Math.random() * 0.1 - 0.05;
+        this.speedX = Math.random() * 0.1 - 0.05;
+        this.speedY = Math.random() * 0.1 - 0.05;
         this.brightness = Math.random() * 0.5;
         this.maxBrightness = 0.5 + Math.random() * 0.5;
-        this.brightnessChangeSpeed = prefersReducedMotion ? 0 : 0.005 + Math.random() * 0.01;
+        this.brightnessChangeSpeed = 0.005 + Math.random() * 0.01;
       }
 
       update() {
@@ -95,9 +93,9 @@ const StarBackground: React.FC = () => {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height / 3;
         this.length = Math.random() * 80 + 50;
-        this.speed = prefersReducedMotion ? 0 : Math.random() * 10 + 5;
-        this.opacity = prefersReducedMotion ? 0 : 1;
-        this.active = !prefersReducedMotion;
+        this.speed = Math.random() * 10 + 5;
+        this.opacity = 1;
+        this.active = true;
       }
 
       update() {
@@ -170,11 +168,9 @@ const StarBackground: React.FC = () => {
       }
 
       update() {
-        if (!prefersReducedMotion) {
-          // 轻微移动
-          this.x += Math.sin(Date.now() * 0.0001) * 0.2 * this.direction;
-          this.y += Math.cos(Date.now() * 0.0001) * 0.2 * this.direction;
-        }
+        // 轻微移动
+        this.x += Math.sin(Date.now() * 0.0001) * 0.2 * this.direction;
+        this.y += Math.cos(Date.now() * 0.0001) * 0.2 * this.direction;
       }
 
       draw() {
@@ -234,13 +230,12 @@ const StarBackground: React.FC = () => {
       requestAnimationFrame(animate);
     };
     
-    const animationId = requestAnimationFrame(animate);
+    animate();
 
     return () => {
       window.removeEventListener('resize', setCanvasSize);
-      cancelAnimationFrame(animationId);
     };
-  }, [prefersReducedMotion]);
+  }, []);
 
   // 统一背景样式，确保服务器端和客户端初始渲染一致
   const backgroundStyle = {
@@ -252,7 +247,8 @@ const StarBackground: React.FC = () => {
     <canvas
       ref={canvasRef}
       className="fixed top-0 left-0 w-full h-full -z-10"
-      style={{ opacity: isMounted ? 1 : 0, transition: 'opacity 1s ease-in-out' }}
+      style={backgroundStyle}
+      aria-hidden="true"
     />
   );
 };
