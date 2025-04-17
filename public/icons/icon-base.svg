@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 深蓝色背景 -->
+  <rect width="512" height="512" fill="#0f172a" />
+  
+  <!-- 星空元素 -->
+  <circle cx="128" cy="128" r="8" fill="#fff" opacity="0.8" />
+  <circle cx="384" cy="96" r="6" fill="#fff" opacity="0.7" />
+  <circle cx="256" cy="192" r="10" fill="#fff" opacity="0.9" />
+  <circle cx="96" cy="384" r="7" fill="#fff" opacity="0.8" />
+  <circle cx="416" cy="320" r="9" fill="#fff" opacity="0.7" />
+  <circle cx="192" cy="416" r="5" fill="#fff" opacity="0.6" />
+  
+  <!-- 中心文字"幻语" -->
+  <path d="M160 232h48v-32h-48v-48h-32v128h32v-48zm96 48h32v-128h-32v128zm48-128v80c0 26.5 21.5 48 48 48h16v-32h-16c-8.8 0-16-7.2-16-16v-80h-32z" fill="#fff" />
+  
+  <!-- 星轨效果 -->
+  <path d="M256 64C150 64 64 150 64 256s86 192 192 192 192-86 192-192S362 64 256 64zm0 352c-88.2 0-160-71.8-160-160S167.8 96 256 96s160 71.8 160 160-71.8 160-160 160z" fill="none" stroke="#6366f1" stroke-width="6" opacity="0.8" />
+</svg> 

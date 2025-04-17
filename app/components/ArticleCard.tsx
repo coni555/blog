@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { getLinkHref } from '../utils/urlHelper';
+import { motion } from 'framer-motion';
 
 interface ArticleCardProps {
   id: string;
@@ -13,6 +14,9 @@ interface ArticleCardProps {
   url: string;
   index?: number;
   featured?: boolean;
+  isRead?: boolean;
+  onCardClick?: (id: string) => void;
+  className?: string;
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
@@ -24,6 +28,9 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   url,
   index = 0,
   featured = false,
+  isRead = false,
+  onCardClick,
+  className = '',
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -44,115 +51,60 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
     setMousePosition({ x, y });
   };
   
+  // 处理点击事件
+  const handleClick = () => {
+    if (onCardClick) {
+      onCardClick(id);
+    }
+  };
+
   return (
-    <div
-      ref={cardRef}
-      className={`relative overflow-hidden rounded-lg border shadow-md transition-all duration-300 
-      ${isHovered ? 'transform shadow-xl z-10' : 'shadow-black/20'}
-      ${featured ? 'border-indigo-500/30' : 'border-white/10'}
-      ${featured ? 'scale-105' : 'scale-100'}
-      `}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onMouseMove={handleMouseMove}
-      style={{
-        transformStyle: 'preserve-3d',
-        transform: isHovered 
-          ? `translateZ(20px) ${featured ? 'scale(1.05)' : 'scale(1.05)'}` 
-          : `translateZ(0) ${featured ? 'scale(1.02)' : 'scale(1)'}`,
-        background: isHovered 
-          ? 'linear-gradient(120deg, rgba(255,255,255,0.1) 0%, rgba(99,102,241,0.1) 100%)' 
-          : 'linear-gradient(120deg, rgba(255,255,255,0.05) 0%, rgba(99,102,241,0.05) 100%)',
-        backdropFilter: 'blur(8px)',
-        animationDelay: `${index * 0.1}s`,
-        padding: featured ? '1.5rem' : '1.25rem',
-      }}
+    <motion.div
+      className={`relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all ${className} ${isRead ? 'opacity-80' : ''}`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      onClick={handleClick}
+      whileHover={{ scale: 1.03 }}
     >
-      {/* 动态边框效果 */}
-      <div 
-        className="absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none"
-        style={{
-          opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(800px circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(99,102,241,0.15), transparent 40%)`,
-        }}
-      />
-      
-      <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 transform origin-left transition-transform duration-500 ease-out ${isHovered ? 'scale-x-100' : 'scale-x-0'}`}></div>
-      
-      <div className="mb-3 flex justify-between items-center">
-        <span className="inline-block px-2 py-1 text-xs rounded-full bg-indigo-500/20 text-indigo-300 backdrop-blur-sm">
-          {category.trim()}
-        </span>
-        <span className="text-xs text-gray-400">{date}</span>
-      </div>
-      
-      <h3 
-        className={`text-lg font-semibold mb-3 text-white leading-relaxed transition-all duration-300 ${isHovered ? 'transform translate-x-1 text-indigo-200' : ''}`}
-        style={{
-          textShadow: isHovered ? '0 0 15px rgba(99,102,241,0.5)' : 'none'
-        }}
-      >
-        {title}
-      </h3>
-      
-      {summary && (
-        <p className={`text-gray-300 text-sm mb-4 line-clamp-2 leading-relaxed transition-all duration-300 ${isHovered ? 'text-gray-200' : ''}`}>
-          {summary}
-        </p>
+      {/* 已读标记 */}
+      {isRead && (
+        <div className="absolute top-3 right-3 z-10">
+          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+            已读
+          </span>
+        </div>
       )}
       
-      <div className="flex justify-between items-center mt-1">
-        <Link 
-          href={getLinkHref(`/article/${id}`)}
-          className={`text-indigo-300 text-sm hover:text-indigo-200 transition-all duration-300 
-            flex items-center gap-1 group
-            ${isHovered ? 'text-indigo-200 pl-1' : ''}`}
-        >
-          阅读全文
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            className={`h-4 w-4 transition-transform duration-300 ${isHovered ? 'translate-x-1' : ''}`} 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
-        
-        {url && (
-          <a 
-            href={url} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="text-gray-400 text-sm hover:text-gray-300 transition-colors"
-          >
-            原文链接
-          </a>
-        )}
+      <div className="p-5">
+        <div className="flex flex-col h-full">
+          <div>
+            <Link href={`/article/${id}`} className="block">
+              <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-white line-clamp-2">{title}</h3>
+            </Link>
+            
+            <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-3">
+              <span>{date}</span>
+              <Link href={`/category/${encodeURIComponent(category)}`} className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                {category}
+              </Link>
+            </div>
+          </div>
+          
+          <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+            <Link 
+              href={url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+              onClick={(e) => e.stopPropagation()} // 防止触发卡片的onClick
+            >
+              阅读原文 →
+            </Link>
+          </div>
+        </div>
       </div>
-      
-      {/* 内发光效果 */}
-      <div 
-        className={`absolute inset-0 rounded-lg transition-opacity duration-300 pointer-events-none`}
-        style={{
-          boxShadow: 'inset 0 0 15px rgba(99,102,241,0.3)',
-          opacity: isHovered ? 0.6 : 0,
-        }}
-      />
-      
-      {/* 聚光特效 */}
-      {isMounted && (
-        <div 
-          className="absolute inset-0 rounded-lg overflow-hidden pointer-events-none"
-          style={{
-            background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)`,
-            opacity: isHovered ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-          }}
-        />
-      )}
-    </div>
+    </motion.div>
   );
 };
 
