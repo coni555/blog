@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const STORAGE_KEY = 'reading_history';
 const MAX_HISTORY = 100; // 最多存储100篇文章的历史记录
@@ -31,7 +31,7 @@ export function useReadingHistory(allArticles = []) {
   }, []);
   
   // 保存阅读历史到localStorage
-  const saveHistory = (newHistory) => {
+  const saveHistory = useCallback((newHistory) => {
     if (typeof window === 'undefined') return;
     
     try {
@@ -39,10 +39,10 @@ export function useReadingHistory(allArticles = []) {
     } catch (error) {
       console.error('Error saving reading history:', error);
     }
-  };
+  }, []);
   
   // 标记文章为已读
-  const markAsRead = (articleId) => {
+  const markAsRead = useCallback((articleId) => {
     if (!articleId || readArticles.includes(articleId)) return;
     
     const newHistory = [
@@ -52,21 +52,31 @@ export function useReadingHistory(allArticles = []) {
     
     setReadArticles(newHistory);
     saveHistory(newHistory);
-  };
+  }, [readArticles, saveHistory]);
   
   // 检查文章是否已读
-  const isArticleRead = (articleId) => {
+  const isArticleRead = useCallback((articleId) => {
     return readArticles.includes(articleId);
-  };
+  }, [readArticles]);
   
   // 获取未读文章
-  const getUnreadArticles = () => {
+  const getUnreadArticles = useCallback(() => {
     if (!allArticles || allArticles.length === 0) return [];
     return allArticles.filter(article => !readArticles.includes(article.id));
-  };
+  }, [allArticles, readArticles]);
+  
+  // 辅助函数：数组随机洗牌
+  const shuffleArray = useCallback((array) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  }, []);
   
   // 获取推荐文章（优先未读）
-  const getRecommendedArticles = (count = 3, category = null) => {
+  const getRecommendedArticles = useCallback((count = 3, category = null) => {
     if (!allArticles || allArticles.length === 0) return [];
     
     // 筛选指定分类的文章
@@ -88,10 +98,10 @@ export function useReadingHistory(allArticles = []) {
     }
     
     return recommended;
-  };
+  }, [allArticles, readArticles, shuffleArray]);
   
   // 获取随机未读文章
-  const getRandomUnreadArticle = () => {
+  const getRandomUnreadArticle = useCallback(() => {
     const unread = getUnreadArticles();
     if (unread.length === 0) {
       // 所有文章都已读，则从所有文章中随机选择一篇
@@ -102,23 +112,13 @@ export function useReadingHistory(allArticles = []) {
     
     // 随机选择一篇未读文章
     return unread[Math.floor(Math.random() * unread.length)];
-  };
+  }, [allArticles, getUnreadArticles]);
   
   // 清除阅读历史
-  const clearHistory = () => {
+  const clearHistory = useCallback(() => {
     setReadArticles([]);
     localStorage.removeItem(STORAGE_KEY);
-  };
-  
-  // 辅助函数：数组随机洗牌
-  const shuffleArray = (array) => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-  };
+  }, []);
   
   return {
     readArticles,

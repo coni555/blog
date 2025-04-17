@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { getLinkHref } from '../utils/urlHelper';
 import { motion } from 'framer-motion';
 
 interface ArticleCardProps {
@@ -10,10 +9,7 @@ interface ArticleCardProps {
   title: string;
   date: string;
   category: string;
-  summary?: string;
   url: string;
-  index?: number;
-  featured?: boolean;
   isRead?: boolean;
   onCardClick?: (id: string) => void;
   className?: string;
@@ -24,33 +20,11 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   title,
   date,
   category,
-  summary,
   url,
-  index = 0,
-  featured = false,
   isRead = false,
   onCardClick,
   className = '',
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [isMounted, setIsMounted] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    
-    setMousePosition({ x, y });
-  };
-  
   // 处理点击事件
   const handleClick = () => {
     if (onCardClick) {

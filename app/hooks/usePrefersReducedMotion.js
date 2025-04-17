@@ -16,6 +16,10 @@ export function usePrefersReducedMotion() {
   
   useEffect(() => {
     // 检查浏览器是否支持matchMedia
+    if (typeof window === 'undefined' || !window.matchMedia) {
+      return;
+    }
+    
     const mediaQueryList = window.matchMedia(QUERY);
     
     // 如果用户没有设置减少动画偏好，则将状态设为false

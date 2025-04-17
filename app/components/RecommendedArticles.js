@@ -24,7 +24,7 @@ const RecommendedArticles = ({ articles }) => {
       setRecommended(getRecommendedArticles(3));
       setRandomArticle(getRandomUnreadArticle());
     }
-  }, [articles]);
+  }, [articles, getRecommendedArticles, getRandomUnreadArticle]);
   
   // 处理文章点击，标记为已读并跳转
   const handleArticleClick = (id) => {
