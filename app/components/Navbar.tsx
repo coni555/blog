@@ -68,7 +68,7 @@ const Navbar = () => {
 
         {/* 导航链接 */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link 
+          <Link
             href={getLinkHref("/")}
             className={`text-gray-100 hover:text-indigo-300 transition-colors ${pathname === '/' ? 'font-medium text-indigo-300' : ''}`}
           >
@@ -184,6 +184,13 @@ const Navbar = () => {
             className={`text-gray-100 hover:text-indigo-300 transition-colors ${pathname === '/about' ? 'font-medium text-indigo-300' : ''}`}
           >
             关于我
+          </Link>
+
+          <Link
+            href={getLinkHref("/go")}
+            className={`text-gray-100 hover:text-indigo-300 transition-colors ${pathname === '/go' ? 'font-medium text-indigo-300' : ''}`}
+          >
+            围棋训练
           </Link>
 
           {/* 主题切换器 */}
@@ -313,12 +320,20 @@ const Navbar = () => {
               )}
             </div>
             
-            <Link 
-              href={getLinkHref("/about")} 
+            <Link
+              href={getLinkHref("/about")}
               className={`block py-2 text-gray-100 hover:text-indigo-300 transition-colors ${pathname === '/about' ? 'font-medium text-indigo-300' : ''}`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               关于我
+            </Link>
+
+            <Link
+              href={getLinkHref("/go")}
+              className={`block py-2 text-gray-100 hover:text-indigo-300 transition-colors ${pathname === '/go' ? 'font-medium text-indigo-300' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              围棋训练
             </Link>
 
             {/* 添加主题切换 */}
